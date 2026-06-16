@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1160">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 4 L0 8 z"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1160" fill="#EFE9D9"/>
+
+  <!-- title -->
+  <text x="80" y="92" font-size="60" font-weight="900" fill="#0F0F0F">Sync Agent 系统定位</text>
+  <text x="82" y="146" font-size="24" font-weight="500" fill="#2A2A2A">单进程边缘代理 · 位于控制平面与本地存储之间</text>
+
+  <!-- console node -->
+  <rect x="292" y="232" width="288" height="92" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="436" y="288" font-size="30" font-weight="700" fill="#0F0F0F" text-anchor="middle">Web 控制台</text>
+
+  <!-- console -> control plane -->
+  <line x1="436" y1="324" x2="436" y2="398" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="452" y="374" font-size="17" font-weight="500" fill="#2A2A2A">下发配置</text>
+
+  <!-- control plane (cloud / backend) -->
+  <text x="150" y="420" font-size="20" font-weight="700" fill="#1F8A4C">云端</text>
+  <rect x="150" y="428" width="572" height="112" fill="#0F0F0F"/>
+  <text x="436" y="476" font-size="28" font-weight="700" fill="#EFE9D9" text-anchor="middle">控制平面</text>
+  <text x="436" y="512" font-size="19" font-weight="500" fill="#C9C3B4" text-anchor="middle">Control Plane · 任务编排</text>
+
+  <!-- control plane <-> agent -->
+  <line x1="300" y1="540" x2="300" y2="710" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="410" y1="710" x2="410" y2="542" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="286" y="612" font-size="17" font-weight="600" fill="#1F8A4C" text-anchor="end">拉取任务</text>
+  <text x="286" y="634" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="end">/tasks</text>
+  <text x="424" y="612" font-size="17" font-weight="600" fill="#E85A1F">心跳 · 上报</text>
+  <text x="424" y="634" font-size="15" font-weight="500" fill="#2A2A2A">· logs</text>
+
+  <!-- ===== edge node zone ===== -->
+  <rect x="90" y="672" width="1440" height="420" fill="#1A1A16"/>
+  <rect x="80" y="662" width="1440" height="420" fill="#E4DCC4" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="116" y="702" font-size="26" font-weight="700" fill="#0F0F0F">边缘节点　<tspan font-size="20" font-weight="500" fill="#2A2A2A">Sync Agent 与 Cache 同机部署</tspan></text>
+
+  <!-- Sync Agent : FOCAL -->
+  <rect x="132" y="724" width="460" height="320" fill="#E85A1F"/>
+  <rect x="120" y="712" width="460" height="320" fill="#1F8A4C" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="350" y="818" font-size="52" font-weight="900" fill="#FBF6E9" text-anchor="middle">Sync Agent</text>
+  <text x="350" y="866" font-size="24" font-weight="600" fill="#FBF6E9" text-anchor="middle">单进程 · 轮询器</text>
+  <text x="350" y="936" font-size="20" font-weight="500" fill="#DCF4A2" text-anchor="middle">向上拉取任务</text>
+  <text x="350" y="968" font-size="20" font-weight="500" fill="#DCF4A2" text-anchor="middle">向下同步落盘</text>
+
+  <!-- Local Cache : supporting -->
+  <rect x="710" y="772" width="320" height="200" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="870" y="846" font-size="30" font-weight="700" fill="#0F0F0F" text-anchor="middle">Local Cache</text>
+  <text x="870" y="884" font-size="19" font-weight="500" fill="#2A2A2A" text-anchor="middle">127.0.0.1:6379</text>
+  <text x="870" y="920" font-size="18" font-weight="500" fill="#2A2A2A" text-anchor="middle">本地缓存服务</text>
+
+  <!-- Object Store : supporting -->
+  <rect x="1150" y="772" width="320" height="200" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <rect x="1150" y="772" width="320" height="12" fill="#F5C518"/>
+  <text x="1310" y="848" font-size="30" font-weight="700" fill="#0F0F0F" text-anchor="middle">Object Store</text>
+  <text x="1310" y="886" font-size="19" font-weight="500" fill="#2A2A2A" text-anchor="middle">本地对象存储</text>
+  <text x="1310" y="920" font-size="19" font-weight="500" fill="#2A2A2A" text-anchor="middle">data/</text>
+
+  <!-- agent -> cache -->
+  <line x1="580" y1="872" x2="710" y2="872" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="645" y="848" font-size="15" font-weight="600" fill="#0F0F0F" text-anchor="middle">读写缓存</text>
+  <text x="645" y="906" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">+ 轮询状态</text>
+
+  <!-- cache -> store -->
+  <line x1="1030" y1="872" x2="1150" y2="872" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1090" y="848" font-size="15" font-weight="600" fill="#0F0F0F" text-anchor="middle">落盘</text>
+
+  <!-- agent -> store : atomic write -->
+  <polyline points="350,1032 350,1058 1310,1058 1310,974" fill="none" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="830" y="1052" font-size="18" font-weight="600" fill="#E85A1F" text-anchor="middle">原子写入 · 落盘归档</text>
+</svg>

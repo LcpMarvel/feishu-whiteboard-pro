@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1150">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 4 L0 8 z"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1150" fill="#EFE9D9"/>
+
+  <!-- title -->
+  <text x="80" y="92" font-size="56" font-weight="900" fill="#0F0F0F">请求处理 · handleRequest()</text>
+  <text x="82" y="142" font-size="23" font-weight="500" fill="#2A2A2A">parse → 并行取数 → respond · 单请求生命周期</text>
+
+  <!-- ===== ① 准备 (quiet) ===== -->
+  <text x="180" y="214" font-size="19" font-weight="700" fill="#1F8A4C">① 准备 · parse</text>
+  <rect x="180" y="234" width="380" height="92" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="370" y="278" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">parseRequest</text>
+  <text x="370" y="306" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">解析入参</text>
+
+  <rect x="610" y="234" width="380" height="92" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="800" y="278" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">validate</text>
+  <text x="800" y="306" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">校验参数</text>
+
+  <rect x="1040" y="234" width="380" height="92" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="1230" y="278" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">authorize</text>
+  <text x="1230" y="306" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">鉴权 · 限流</text>
+
+  <line x1="560" y1="280" x2="610" y2="280" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="990" y1="280" x2="1040" y2="280" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- ===== ② 并行取数 (FOCAL) ===== -->
+  <text x="180" y="386" font-size="19" font-weight="700" fill="#1F8A4C">② 并行取数 · 两条链路独立汇聚</text>
+
+  <!-- fork: centred trunk, symmetric split -->
+  <polyline points="1230,326 1230,366 800,366 800,398 460,398 460,416" fill="none" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <polyline points="800,398 1140,398 1140,416" fill="none" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- queryDB lane (green, shadow) -->
+  <rect x="192" y="430" width="560" height="300" fill="#E85A1F"/>
+  <rect x="180" y="418" width="560" height="300" fill="#1F8A4C" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="460" y="522" font-size="42" font-weight="900" fill="#FBF6E9" text-anchor="middle">queryDB</text>
+  <text x="460" y="568" font-size="22" font-weight="600" fill="#FBF6E9" text-anchor="middle">查询主库</text>
+  <text x="460" y="636" font-size="19" font-weight="500" fill="#DCF4A2" text-anchor="middle">连接池复用</text>
+  <text x="460" y="670" font-size="19" font-weight="500" fill="#DCF4A2" text-anchor="middle">500ms 超时</text>
+
+  <!-- callService lane (cream + orange header) -->
+  <rect x="860" y="418" width="560" height="300" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <rect x="860" y="418" width="560" height="22" fill="#E85A1F"/>
+  <text x="1140" y="526" font-size="38" font-weight="700" fill="#0F0F0F" text-anchor="middle">callService</text>
+  <text x="1140" y="572" font-size="22" font-weight="500" fill="#2A2A2A" text-anchor="middle">调下游服务</text>
+  <text x="1140" y="638" font-size="19" font-weight="500" fill="#2A2A2A" text-anchor="middle">3 次退避重试</text>
+  <text x="1140" y="672" font-size="19" font-weight="500" fill="#2A2A2A" text-anchor="middle">熔断保护</text>
+
+  <!-- converge to JOIN -->
+  <polyline points="460,718 460,748 720,748 720,768" fill="none" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+  <polyline points="1140,718 1140,748 880,748 880,768" fill="none" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- JOIN -->
+  <rect x="620" y="770" width="360" height="104" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="800" y="822" font-size="28" font-weight="700" fill="#1F8A4C" text-anchor="middle">Promise.all 合并</text>
+  <text x="800" y="852" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">两条链路全部就绪</text>
+
+  <!-- JOIN -> finalize -->
+  <polyline points="800,874 800,920 320,920 320,966" fill="none" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- ===== ③ 收尾 ===== -->
+  <text x="180" y="950" font-size="19" font-weight="700" fill="#1F8A4C">③ 收尾 · respond</text>
+  <rect x="180" y="968" width="280" height="104" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="320" y="1018" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">assemble</text>
+  <text x="320" y="1046" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">组装响应</text>
+
+  <rect x="500" y="968" width="280" height="104" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="640" y="1018" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">writeCache</text>
+  <text x="640" y="1046" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">写缓存</text>
+
+  <rect x="820" y="968" width="280" height="104" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <rect x="820" y="968" width="280" height="16" fill="#F5C518"/>
+  <text x="960" y="1022" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">respond</text>
+  <text x="960" y="1050" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">200 / 4xx / 5xx</text>
+
+  <rect x="1140" y="968" width="280" height="104" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="1280" y="1018" font-size="22" font-weight="700" fill="#0F0F0F" text-anchor="middle">auditLog</text>
+  <text x="1280" y="1046" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">+ 审计日志</text>
+
+  <line x1="460" y1="1020" x2="500" y2="1020" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="780" y1="1020" x2="820" y2="1020" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="1100" y1="1020" x2="1140" y2="1020" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+</svg>

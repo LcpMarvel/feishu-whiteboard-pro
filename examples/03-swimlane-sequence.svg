@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1270">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 4 L0 8 z"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1270" fill="#EFE9D9"/>
+
+  <!-- title -->
+  <text x="80" y="92" font-size="60" font-weight="900" fill="#0F0F0F">下单结算时序</text>
+  <text x="82" y="146" font-size="24" font-weight="500" fill="#2A2A2A">客户端 · 订单服务 · 支付网关 · 库存服务 的一次完整结算</text>
+
+  <!-- lifelines -->
+  <line x1="270" y1="282" x2="270" y2="1185" stroke="#0F0F0F" stroke-width="2"/>
+  <line x1="670" y1="282" x2="670" y2="1185" stroke="#1F8A4C" stroke-width="3"/>
+  <line x1="1050" y1="282" x2="1050" y2="1185" stroke="#0F0F0F" stroke-width="2"/>
+  <line x1="1435" y1="282" x2="1435" y2="1185" stroke="#0F0F0F" stroke-width="2"/>
+
+  <!-- participant headers -->
+  <rect x="160" y="190" width="220" height="92" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="270" y="232" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">客户端</text>
+  <text x="270" y="262" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">Web / App</text>
+
+  <rect x="557" y="202" width="250" height="92" fill="#E85A1F"/>
+  <rect x="545" y="190" width="250" height="92" fill="#1F8A4C" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="670" y="234" font-size="28" font-weight="900" fill="#FBF6E9" text-anchor="middle">订单服务</text>
+  <text x="670" y="264" font-size="17" font-weight="600" fill="#DCF4A2" text-anchor="middle">编排核心</text>
+
+  <rect x="945" y="190" width="210" height="92" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="1050" y="232" font-size="24" font-weight="700" fill="#0F0F0F" text-anchor="middle">支付网关</text>
+  <text x="1050" y="262" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">Payment GW</text>
+
+  <rect x="1345" y="190" width="175" height="92" fill="#FBF6E9" stroke="#0F0F0F" stroke-width="4"/>
+  <rect x="1345" y="190" width="175" height="18" fill="#F5C518"/>
+  <text x="1435" y="240" font-size="24" font-weight="700" fill="#0F0F0F" text-anchor="middle">库存服务</text>
+  <text x="1435" y="270" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">Inventory</text>
+
+  <!-- 1. Client -> Order -->
+  <text x="470" y="318" font-size="17" font-weight="600" fill="#0F0F0F" text-anchor="middle">POST /checkout</text>
+  <text x="470" y="338" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">cartId · 收货地址</text>
+  <line x1="272" y1="352" x2="666" y2="352" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 2. Order self -->
+  <polyline points="670,388 726,388 726,410 674,410" fill="none" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="740" y="405" font-size="16" font-weight="500" fill="#2A2A2A">校验购物车 · 算价</text>
+
+  <!-- 3. Order -> Payment -->
+  <text x="860" y="452" font-size="17" font-weight="600" fill="#0F0F0F" text-anchor="middle">POST /charge</text>
+  <text x="860" y="472" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">{amount, token}</text>
+  <line x1="674" y1="486" x2="1046" y2="486" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 4. Payment -> Order -->
+  <text x="860" y="528" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">202 {pay_id}</text>
+  <line x1="1046" y1="542" x2="674" y2="542" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- LOOP frame -->
+  <rect x="210" y="568" width="860" height="178" fill="none" stroke="#0F0F0F" stroke-width="3"/>
+  <rect x="210" y="568" width="150" height="32" fill="#0F0F0F"/>
+  <text x="232" y="591" font-size="17" font-weight="700" fill="#FBF6E9">loop</text>
+  <text x="372" y="591" font-size="16" font-weight="600" fill="#2A2A2A">轮询支付 · 每 2s · 上限 90s</text>
+
+  <!-- 5. Order -> Payment -->
+  <text x="860" y="636" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">GET /charge/:id</text>
+  <line x1="674" y1="650" x2="1046" y2="650" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 6. Payment -> Order -->
+  <text x="860" y="684" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">status + 3DS</text>
+  <line x1="1046" y1="698" x2="674" y2="698" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 7. Order -> Client -->
+  <text x="470" y="732" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">进度推送 · SSE</text>
+  <line x1="666" y1="730" x2="274" y2="730" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- payment processing panel : concurrent with polling, fills the right -->
+  <rect x="1080" y="552" width="340" height="300" fill="#F7E7C8" stroke="#0F0F0F" stroke-width="3"/>
+  <text x="1250" y="596" font-size="20" font-weight="700" fill="#0F0F0F" text-anchor="middle">支付网关 内部</text>
+  <text x="1250" y="624" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">（与上方轮询并发进行）</text>
+  <text x="1108" y="690" font-size="17" font-weight="600" fill="#0F0F0F">① 风控校验</text>
+  <text x="1108" y="730" font-size="17" font-weight="600" fill="#0F0F0F">② 调银行通道</text>
+  <text x="1108" y="770" font-size="17" font-weight="600" fill="#0F0F0F">③ 等待异步回调</text>
+  <text x="1130" y="802" font-size="15" font-weight="500" fill="#2A2A2A">webhook</text>
+
+  <!-- 8. Payment -> Order -->
+  <text x="860" y="898" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">status = paid / failed</text>
+  <line x1="1046" y1="912" x2="674" y2="912" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 9. Order -> Inventory -->
+  <text x="1052" y="958" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">reserve · 锁定库存</text>
+  <line x1="674" y1="972" x2="1431" y2="972" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 10. Order -> Inventory (orange highlight) -->
+  <text x="1052" y="1010" font-size="17" font-weight="700" fill="#E85A1F" text-anchor="middle">commit · 扣减确认</text>
+  <line x1="674" y1="1024" x2="1431" y2="1024" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 11. Order self -->
+  <polyline points="670,1060 726,1060 726,1082 674,1082" fill="none" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="740" y="1077" font-size="16" font-weight="500" fill="#2A2A2A">生成订单号 + 落库</text>
+
+  <!-- 12. Order -> Client -->
+  <text x="470" y="1118" font-size="17" font-weight="600" fill="#0F0F0F" text-anchor="middle">200 订单确认</text>
+  <text x="470" y="1138" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">orderId · receipt</text>
+  <line x1="666" y1="1152" x2="274" y2="1152" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- 13. Client self -->
+  <polyline points="270,1182 326,1182 326,1204 274,1204" fill="none" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="340" y="1199" font-size="16" font-weight="700" fill="#1F8A4C">状态 pending → paid</text>
+</svg>

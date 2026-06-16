@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+
+# live-board exports / scratch renders (gallery PNGs under examples/ are committed)
+whiteboard_*.png
+diagram.png
+node_modules/
