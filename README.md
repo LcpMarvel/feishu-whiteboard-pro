@@ -67,7 +67,7 @@ Clone the repo, then make it visible to your agent by symlinking (or copying) it
 directory:
 
 ```bash
-git clone https://github.com/<you>/feishu-whiteboard-pro.git
+git clone https://github.com/LcpMarvel/feishu-whiteboard-pro.git
 
 # Claude Code (user-level skills):
 ln -s "$(pwd)/feishu-whiteboard-pro" ~/.claude/skills/feishu-whiteboard-pro
