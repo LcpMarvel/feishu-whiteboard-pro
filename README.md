@@ -63,17 +63,30 @@ Run [`scripts/preflight.sh`](scripts/preflight.sh) to check all of the above.
 
 ## Install
 
-Clone the repo, then make it visible to your agent by symlinking (or copying) it into your skills
-directory:
+Use the [`skills`](https://github.com/vercel-labs/skills) CLI — it detects your agent (Claude Code,
+Cursor, Codex, …) and symlinks the skill into the right directory for you:
+
+```bash
+# global (user-level), available in all your projects:
+npx skills add -g LcpMarvel/feishu-whiteboard-pro
+
+# …or project-level, into the current repo only:
+npx skills add LcpMarvel/feishu-whiteboard-pro
+```
+
+To try it once without installing: `npx skills use LcpMarvel/feishu-whiteboard-pro`.
+
+<details>
+<summary>Manual install (clone + symlink)</summary>
 
 ```bash
 git clone https://github.com/LcpMarvel/feishu-whiteboard-pro.git
 
 # Claude Code (user-level skills):
 ln -s "$(pwd)/feishu-whiteboard-pro" ~/.claude/skills/feishu-whiteboard-pro
-# …or, depending on your setup:
-ln -s "$(pwd)/feishu-whiteboard-pro" ~/.agents/skills/feishu-whiteboard-pro
 ```
+
+</details>
 
 Restart the session; the skill then triggers whenever you ask to create or polish a Feishu whiteboard,
 infographic, diagram, or visual explainer.
