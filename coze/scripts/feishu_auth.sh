@@ -5,7 +5,7 @@
 # in their browser; the board is written --as user into THE USER'S OWN tenant. No per-user
 # manual app setup, no secret typed by anyone, no backend, no ISV.
 #
-# WHY THIS IS STRUCTURED IN STAGES:
+# WHY STAGED + BACKGROUNDED:
 # The Coze agent's command channel chokes on lark-cli's interactive TTY output (QR/spinner)
 # with "shell.execute ... chunk exceed the limit". So the one interactive, blocking step —
 # app registration (`config init --new`, which has no --no-wait) — is run in the BACKGROUND
@@ -13,19 +13,21 @@
 # of streaming it. The scope-grant step uses lark-cli's clean non-blocking flags
 # (`auth login --no-wait --json` / `--device-code`), which emit plain JSON and don't choke.
 #
+# NOTE: deliberately NOT `set -e` — this script branches on many commands that legitimately
+# return non-zero (grep with no match, "not configured" status, a still-running bg PID). We
+# keep `set -u`/`pipefail` and handle outcomes explicitly so a benign non-zero never kills it.
+#
 # Subcommands (SKILL.md orchestrates them across conversation turns):
-#   status                  -> print auth status (is the user logged in?)
+#   status                  -> print auth status
 #   app-begin               -> ensure an app exists; if not, background-register one and print
-#                              VERIFY_URL=<url> for the user to authorize (idempotent: never
-#                              creates a second app)
+#                              VERIFY_URL=<url> (idempotent: never creates a second app)
 #   app-finish              -> wait for the backgrounded registration to complete; APP_OK / APP_PENDING
 #   login-begin             -> start scope authorization; prints {verification_url, device_code} JSON
 #   login-finish <code>     -> complete scope authorization with the device_code, then print status
 #
-# State/persistence: lark-cli stores app config + tokens under LARKSUITE_CLI_CONFIG_DIR.
-# Point it at a persistent path (e.g. the project mount) so a user authorizes only once.
-# lark-cli reads LARKSUITE_CLI_* only — NOT FEISHU_*.
-set -euo pipefail
+# lark-cli reads LARKSUITE_CLI_* only (NOT FEISHU_*). Point LARKSUITE_CLI_CONFIG_DIR at a
+# persistent path so a user authorizes only once.
+set -uo pipefail
 
 if command -v lark-cli >/dev/null 2>&1; then
   LARK=(lark-cli)
@@ -38,16 +40,18 @@ mkdir -p "$STATE_DIR"
 APPREG_LOG="$STATE_DIR/appreg.log"
 APPREG_PID="$STATE_DIR/appreg.pid"
 
-# True if an app is already configured (so we never register a duplicate).
+# True iff an app is already configured (so we never register a duplicate).
 app_configured() {
   "${LARK[@]}" config show 2>/dev/null | grep -q '"appId"'
 }
 
-# Extract the first authorization URL from a log file (URL is non-secret).
+# Print the first authorization URL found in a log file (never fails the script).
 scrape_url() {
-  grep -oaE 'https://[^[:space:]"]+' "$1" 2>/dev/null \
-    | grep -iE 'verif|device|oauth|applink|/qr|accounts\.(feishu|larksuite)' | head -1 \
-    || grep -oaE 'https://[^[:space:]"]+' "$1" 2>/dev/null | head -1
+  local f="$1" u
+  u="$(grep -oaE 'https://[^[:space:]"]+' "$f" 2>/dev/null \
+        | grep -iE 'verif|device|oauth|applink|/qr|accounts\.(feishu|larksuite)' | head -1)"
+  [ -z "$u" ] && u="$(grep -oaE 'https://[^[:space:]"]+' "$f" 2>/dev/null | head -1)"
+  printf '%s' "$u"
 }
 
 cmd="${1:-}"; shift || true
@@ -57,38 +61,39 @@ case "$cmd" in
     ;;
 
   app-begin)
-    # Power-user / test shortcut: bring an existing app's creds via env (non-interactive,
-    # no browser registration). Keeps the secret out of the agent — it comes from env only.
+    # Power-user / test shortcut: bring an existing app's creds via env (non-interactive).
     if [ -n "${LARKSUITE_CLI_APP_ID:-}" ] && [ -n "${LARKSUITE_CLI_APP_SECRET:-}" ] && ! app_configured; then
-      printf '%s' "$LARKSUITE_CLI_APP_SECRET" | "${LARK[@]}" config init \
-        --app-id "$LARKSUITE_CLI_APP_ID" --app-secret-stdin >/dev/null
+      printf '%s' "$LARKSUITE_CLI_APP_SECRET" \
+        | "${LARK[@]}" config init --app-id "$LARKSUITE_CLI_APP_ID" --app-secret-stdin >/dev/null 2>&1
     fi
     if app_configured; then echo "APP_OK"; exit 0; fi
 
-    # Fresh app: register one in the user's tenant via device flow. This call BLOCKS until the
-    # user authorizes, so run it detached and scrape the URL from its log (never stream it).
+    # Fresh app: register one in the user's tenant via device flow. This BLOCKS until the user
+    # authorizes, so run it detached and scrape the URL from its log (never stream it).
     : > "$APPREG_LOG"
     nohup "${LARK[@]}" config init --new </dev/null >"$APPREG_LOG" 2>&1 &
-    echo $! >"$APPREG_PID"
-    for _ in $(seq 1 45); do
+    echo $! > "$APPREG_PID"
+    for _ in $(seq 1 60); do
       url="$(scrape_url "$APPREG_LOG")"
       if [ -n "$url" ]; then echo "VERIFY_URL=$url"; exit 0; fi
       sleep 1
     done
-    echo "NO_URL: registration emitted no URL in 45s; log tail:" >&2
+    echo "NO_URL: no verification URL appeared in 60s. Log tail:" >&2
     tail -n 40 "$APPREG_LOG" >&2
     exit 1
     ;;
 
   app-finish)
-    # Poll until the backgrounded registration writes the app config (user authorized).
     for _ in $(seq 1 150); do
       if app_configured; then echo "APP_OK"; exit 0; fi
-      if [ -f "$APPREG_PID" ] && ! kill -0 "$(cat "$APPREG_PID" 2>/dev/null)" 2>/dev/null; then
-        app_configured && { echo "APP_OK"; exit 0; }
-        echo "APP_FAILED: registration exited without config; log tail:" >&2
-        tail -n 40 "$APPREG_LOG" >&2
-        exit 1
+      if [ -f "$APPREG_PID" ]; then
+        pid="$(cat "$APPREG_PID" 2>/dev/null)"
+        if [ -n "$pid" ] && ! kill -0 "$pid" 2>/dev/null; then
+          if app_configured; then echo "APP_OK"; exit 0; fi
+          echo "APP_FAILED: registration exited without writing config. Log tail:" >&2
+          tail -n 40 "$APPREG_LOG" >&2
+          exit 1
+        fi
       fi
       sleep 2
     done
@@ -97,7 +102,7 @@ case "$cmd" in
     ;;
 
   login-begin)
-    # Non-blocking, clean JSON output (no spinner) -> safe through the agent channel.
+    # Non-blocking, clean JSON (no spinner) -> safe through the agent channel.
     "${LARK[@]}" auth login --recommend --no-wait --json
     ;;
 
