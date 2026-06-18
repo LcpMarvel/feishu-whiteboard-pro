@@ -1,142 +1,131 @@
 # feishu-whiteboard-pro
 
-A Claude Code / agent **skill** for building genuinely *designed* Feishu / Lark (飞书) whiteboards —
-not just nice colours, but deliberate composition: a clear focal point, real visual hierarchy,
-intentional spacing. The board it produces is a real, **editable** Feishu whiteboard inside a doc,
-not a screenshot.
+一个用于打造真正"经过设计"的飞书 / Lark（飞书）白板的 Claude Code / agent **skill**——不只是配色
+好看，而是讲究构图：清晰的视觉焦点、真实的层次、刻意的留白。它产出的是飞书文档里一块**可编辑**的真实白板，
+而不是一张截图。
 
-It builds on [beautiful-feishu-whiteboard](https://github.com/zarazhangrui/beautiful-feishu-whiteboard)
-(its colour palettes and the hard rules of the SVG-whiteboard medium) and adds the layer that was
-missing: **how to compose, and how to tell whether the result is actually good.**
+它构建于 [beautiful-feishu-whiteboard](https://github.com/zarazhangrui/beautiful-feishu-whiteboard)
+（沿用其配色板与 SVG 白板介质的硬性规则）之上，补上了原项目缺失的那一层：**如何构图，以及如何判断结果到底好不好。**
 
-## What it adds over a palette library
+## 相比一个"配色板库"它多了什么
 
-The medium is deliberately limited — one font, native rects/circles/connectors only, no gradients, no
-filters, no opacity, no motion. So "beautiful" here means composition, hierarchy, rhythm, colour
-discipline, and whitespace. This skill turns two soft, improvised steps into **gates**:
+介质本身被刻意限制——单一字体、只有原生矩形 / 圆 / 连接线，没有渐变、滤镜、透明度、动效。所以这里的"好看"
+指的是构图、层次、节奏、配色克制与留白。这个 skill 把两个原本靠临场发挥的软步骤变成了**关卡（gate）**：
 
 ```
-Understand content
+理解内容
    │
-   ├─▶ GATE 1 · Design brief      archetype + focal point + colour strategy + type roles + anti-cliché
+   ├─▶ 关卡 1 · 设计简报      原型 + 焦点 + 配色策略 + 字号角色 + 反套路检查
    ▼
-Compose against a skeleton        archetype coordinates + fixed type scale + 8px spacing grid
-   │
-   ▼
-Predict defects (fit-check)       deterministic: label-too-wide / gutter-intrusion / bleed, BEFORE render
+对照骨架构图               原型坐标 + 固定字号阶梯 + 8px 间距网格
    │
    ▼
-Render → fix correctness          overflow / overlap / clipping / hand-drawn arrows
+渲染前预测缺陷（fit-check）  确定性：标签过宽 / 挤占间距 / 出血，在渲染前就抓出来
    │
    ▼
-GATE 2 · Design critique          score hierarchy/balance/density/contrast/alignment; an independent
-   │                              reviewer for boards that ship; fix the weakest axis; repeat
+渲染 → 修正确性             溢出 / 重叠 / 裁切 / 手画箭头
+   │
    ▼
-Write into Feishu → verify live → deliver
+关卡 2 · 设计评审           按层次 / 平衡 / 密度 / 对比 / 对齐五轴打分；要交付的板子上独立评审；修最弱项；重复
+   ▼
+写入飞书 → 看实时效果 → 交付
 ```
 
-- **`fit-check`** ([scripts/fit-check.mjs](scripts/fit-check.mjs)) — estimates every label's width
-  (CJK ≈ 1em, Latin ≈ 0.6em) and flags overflow / gutter-intrusion / canvas-bleed *before* you render.
-  Deterministic, no model cost.
-- **Independent critique** — for boards that matter, a separate reviewer scores the render
-  adversarially, so colour-only "fake" focal points and lopsided balance get caught instead of
-  rationalised.
+- **`fit-check`**（[scripts/fit-check.mjs](scripts/fit-check.mjs)）—— 估算每个标签的宽度（中文 ≈ 1em，
+  拉丁字符 ≈ 0.6em），在渲染**之前**就标出溢出 / 挤占间距 / 出血。确定性，不耗模型。
+- **独立评审** —— 对要交付的板子，由一个独立评审者对渲染结果做对抗式打分，把"只靠颜色撑起来"的假焦点和
+  失衡的构图揪出来，而不是自我合理化。
 
-## Examples
+## 示例
 
-Seven gold-standard boards, each critique-clean and rendered on a real Feishu board. They span
-different archetypes and palettes — one even on a *generated* palette — yet all come from the same
-pipeline, so the composition is palette-independent. Open the matching `.svg` in
-[`examples/`](examples/) as a starting skeleton; its coordinates are already critique-clean.
+七张标杆样板，每张都过了双关卡（fit-check 干净、设计评审过关）并在真实飞书白板上渲染过。它们覆盖不同原型
+与配色板——其中一张还用的是**现场生成**的配色——但都出自同一条流水线，所以构图与配色是解耦的。把对应的
+`.svg`（在 [`examples/`](examples/) 里）当作起手骨架打开，坐标都已经是评审过关的。
 
-**Four complex boards, four different palettes:**
+**四张复杂板子，四种不同配色：**
 
 | | |
 |:--:|:--:|
-| ![Radial system map](examples/04-radial-system-map.png)<br>**Radial system map** · Riso Brut | ![Comparison matrix](examples/05-comparison-matrix.png)<br>**Comparison matrix** · Riptide Cobalt |
-| ![Timeline](examples/06-timeline.png)<br>**Timeline** · Coral | ![Hierarchy](examples/07-hierarchy.png)<br>**Hierarchy** · *generated* palette |
+| ![放射式系统图](examples/04-radial-system-map.png)<br>**放射式系统图** · Riso Brut | ![对比矩阵](examples/05-comparison-matrix.png)<br>**对比矩阵** · Riptide Cobalt |
+| ![时间线](examples/06-timeline.png)<br>**时间线** · Coral | ![层级图](examples/07-hierarchy.png)<br>**层级图** · *现场生成*配色 |
 
-**Three foundational boards, one shared palette (Riso Brut):**
+**三张基础板子，共用一套配色（Riso Brut）：**
 
 | | | |
 |:--:|:--:|:--:|
-| ![System map](examples/01-system-map.png)<br>**System map** | ![Pipeline + fork/join](examples/02-pipeline-fork.png)<br>**Pipeline + fork / join** | ![Swimlane sequence](examples/03-swimlane-sequence.png)<br>**Swimlane sequence** |
+| ![系统图](examples/01-system-map.png)<br>**系统图** | ![流程+分叉/汇合](examples/02-pipeline-fork.png)<br>**流程 + 分叉 / 汇合** | ![泳道时序](examples/03-swimlane-sequence.png)<br>**泳道时序** |
 
-## Colour — a curated set, or generated to fit
+## 配色 —— 精选锚点，或现场生成
 
-Colour here is a **design system, not a swatch list**: every palette assigns roles (canvas, ink,
-accents, panels) with usage notes and a commitment dosage, so the agent knows *how* to deploy each
-colour, not just which hex exists.
+这里的配色是**一套设计系统，不是色卡清单**：每套配色都给颜色分配角色（画布、墨色、强调色、面板）并附用途
+说明和投放剂量，让 agent 知道每种颜色**该怎么用**，而不只是有哪些 hex。
 
-- **A tight curated set.** [`CATALOG.md`](CATALOG.md) lists the anchor palettes spanning restrained →
-  bold; pick one by mood and formality. Each is one `templates/<slug>/design.md` and is the single
-  source of truth — the catalogue table is generated from them by `scripts/build-catalog.mjs`.
-- **Generated when none fits.** If no anchor matches the brief, the skill generates a palette via
-  [`templates/GENERATE.md`](templates/GENERATE.md) — OKLCH shade derivation, tinted neutrals, role
-  dosage, and the medium's own constraints (canvas never pure white, ink never `#000`, flat / no
-  alpha). It comes out in the **same frontmatter shape** as an anchor, so it stays swappable and can be
-  saved as a template. The hierarchy board above runs on a generated "Steel Infra" palette.
-- **Swap any time.** A palette swap keeps the composition and only changes the colours.
+- **一组精挑的锚点。** [`CATALOG.md`](CATALOG.md) 列出从克制到大胆的锚点配色；按气质和正式度挑一套。
+  每套就是一个 `templates/<slug>/design.md`，并且是唯一真相源——目录表由它们经 `scripts/build-catalog.mjs`
+  生成。
+- **没有合适的就现场生成。** 如果没有锚点契合简报，skill 会按 [`templates/GENERATE.md`](templates/GENERATE.md)
+  生成一套——OKLCH 明暗推导、带色偏的中性色、角色剂量，以及介质自身的约束（画布绝不用纯白、墨色绝不用
+  `#000`、纯平 / 无透明度）。它产出的 frontmatter 形态和锚点**完全一致**，所以照样能换肤、也能存成新模板。
+  上面那张层级图用的就是现场生成的 “Steel Infra” 配色。
+- **随时换肤。** 换配色只改颜色、不动构图。
 
-## Prerequisites
+## 前置条件
 
 - **Node 20+**
-- **[`lark-cli`](https://www.npmjs.com/package/@larksuite/cli)** installed and authenticated:
-  `npm install -g @larksuite/cli`, then `lark-cli config init` (scan the QR) and `lark-cli auth login`
-- **`@larksuite/whiteboard-cli`** — used via `npx`, auto-downloads, no install needed
-- A **Feishu / Lark account** (boards are written to your own tenant)
+- **[`lark-cli`](https://www.npmjs.com/package/@larksuite/cli)** 已安装并完成认证：
+  `npm install -g @larksuite/cli`，然后 `lark-cli config init`（扫码）和 `lark-cli auth login`
+- **`@larksuite/whiteboard-cli`** —— 通过 `npx` 使用，自动下载，无需安装
+- 一个**飞书 / Lark 账号**（板子写进你自己的租户）
 
-Run [`scripts/preflight.sh`](scripts/preflight.sh) to check all of the above.
+运行 [`scripts/preflight.sh`](scripts/preflight.sh) 可一次性检查以上全部。
 
-## Install
+## 安装
 
-Use the [`skills`](https://github.com/vercel-labs/skills) CLI — it detects your agent (Claude Code,
-Cursor, Codex, …) and symlinks the skill into the right directory for you:
+用 [`skills`](https://github.com/vercel-labs/skills) CLI —— 它会识别你的 agent（Claude Code、Cursor、
+Codex…）并把 skill 软链到正确的目录：
 
 ```bash
-# global (user-level), available in all your projects:
+# 全局（用户级），所有项目可用：
 npx skills add -g LcpMarvel/feishu-whiteboard-pro
 
-# …or project-level, into the current repo only:
+# …或项目级，只装进当前仓库：
 npx skills add LcpMarvel/feishu-whiteboard-pro
 ```
 
-To try it once without installing: `npx skills use LcpMarvel/feishu-whiteboard-pro`.
+不安装、只试一次：`npx skills use LcpMarvel/feishu-whiteboard-pro`。
 
 <details>
-<summary>Manual install (clone + symlink)</summary>
+<summary>手动安装（clone + 软链）</summary>
 
 ```bash
 git clone https://github.com/LcpMarvel/feishu-whiteboard-pro.git
 
-# Claude Code (user-level skills):
+# Claude Code（用户级 skills）：
 ln -s "$(pwd)/feishu-whiteboard-pro" ~/.claude/skills/feishu-whiteboard-pro
 ```
 
 </details>
 
-Restart the session; the skill then triggers whenever you ask to create or polish a Feishu whiteboard,
-infographic, diagram, or visual explainer.
+重启会话；之后只要你让它创建或打磨飞书白板、信息图、图表或可视化讲解，skill 就会触发。
 
-## What's in the box
+## 仓库结构
 
-| Path | What |
+| 路径 | 作用 |
 |---|---|
-| [`SKILL.md`](SKILL.md) | The gated pipeline and orchestration |
-| [`COMPOSITION.md`](COMPOSITION.md) | Archetype library (coordinate skeletons), type scale, spacing grid, anti-cliché list — the core |
-| [`CRITIQUE.md`](CRITIQUE.md) | Post-render design rubric (5 axes) + independent-review instructions |
-| [`RULES.md`](RULES.md) | Hard limits of the Feishu SVG whiteboard medium, verified empirically |
-| [`templates/`](templates/) | A tight set of curated colour palettes (one `design.md` each) — the single source of truth |
-| [`CATALOG.md`](CATALOG.md) | The pick-a-style table, **generated** from `templates/` by `scripts/build-catalog.mjs` |
-| [`templates/GENERATE.md`](templates/GENERATE.md) | How to generate a fresh palette (same frontmatter shape) when no anchor fits |
-| [`examples/`](examples/) | Seven gold-standard boards per archetype (editable `.svg` + render) |
-| [`scripts/`](scripts/) | `fit-check.mjs` (pre-render predictor), `build-catalog.mjs` (regenerate CATALOG), `preflight.sh` |
+| [`SKILL.md`](SKILL.md) | 门控流水线与编排 |
+| [`COMPOSITION.md`](COMPOSITION.md) | 原型库（坐标骨架）、字号阶梯、间距网格、反套路清单——核心 |
+| [`CRITIQUE.md`](CRITIQUE.md) | 渲染后设计评分准则（五轴）+ 独立评审说明 |
+| [`RULES.md`](RULES.md) | 飞书 SVG 白板介质的硬性限制，实测验证 |
+| [`templates/`](templates/) | 一组精选配色板（每套一个 `design.md`）——唯一真相源 |
+| [`CATALOG.md`](CATALOG.md) | 选色表，由 `templates/` 经 `scripts/build-catalog.mjs` **生成** |
+| [`templates/GENERATE.md`](templates/GENERATE.md) | 没有锚点契合时，如何生成一套（同 frontmatter 形态）新配色 |
+| [`examples/`](examples/) | 七张按原型分类的标杆样板（可编辑 `.svg` + 渲染图） |
+| [`scripts/`](scripts/) | `fit-check.mjs`（渲染前预测）、`build-catalog.mjs`（重生成 CATALOG）、`preflight.sh` |
 
-## Credits & license
+## 致谢与许可
 
-MIT. A curated, distilled subset of the palettes and the medium rules are adapted from
-**[beautiful-feishu-whiteboard](https://github.com/zarazhangrui/beautiful-feishu-whiteboard)** by
-**Zara Zhang ([@zarazhangrui](https://github.com/zarazhangrui))** — © Zara Zhang, MIT. The composition,
-critique, fit-check, gated-pipeline, and palette-generation layers are original additions. The
-design-judgment approach is inspired by the **impeccable / frontend-design** skills (no code copied).
-See [`LICENSE`](LICENSE).
+MIT。**精选并蒸馏过的一部分配色**与介质规则改编自
+**[beautiful-feishu-whiteboard](https://github.com/zarazhangrui/beautiful-feishu-whiteboard)**，作者
+**Zara Zhang（[@zarazhangrui](https://github.com/zarazhangrui)）** —— © Zara Zhang，MIT。构图、评审、
+fit-check、门控流水线与配色生成层为原创新增。设计判断的思路受 **impeccable / frontend-design** skill 启发
+（未拷贝代码）。详见 [`LICENSE`](LICENSE)。
