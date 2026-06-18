@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1710">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 4 L0 8 z"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1600" height="1710" fill="#FDF0E0"/>
+
+  <!-- ===== title block ===== -->
+  <rect x="80" y="44" width="14" height="120" fill="#375DFE"/>
+  <text x="120" y="96" font-size="66" font-weight="900" fill="#1A2240">三种后端架构权衡</text>
+  <text x="122" y="150" font-size="25" font-weight="500" fill="#1A2240">单体 · 微服务 · Serverless　逐项对比，蓝块为该行更优的取向</text>
+
+  <!-- ===== column header caps ===== -->
+  <!-- label-column spacer header -->
+  <rect x="80" y="200" width="300" height="120" fill="#1A2240"/>
+  <text x="100" y="252" font-size="22" font-weight="700" fill="#FDF0E0">对比维度</text>
+  <text x="100" y="288" font-size="17" font-weight="500" fill="#FDF0E0">Dimension</text>
+
+  <!-- Monolith header (cream/neutral) -->
+  <rect x="400" y="200" width="354" height="120" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <rect x="400" y="200" width="354" height="14" fill="#375DFE"/>
+  <text x="577" y="262" font-size="32" font-weight="700" fill="#1A2240" text-anchor="middle">单体</text>
+  <text x="577" y="298" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">Monolith</text>
+
+  <!-- Microservices header -->
+  <rect x="782" y="200" width="354" height="120" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <rect x="782" y="200" width="354" height="14" fill="#375DFE"/>
+  <text x="959" y="262" font-size="32" font-weight="700" fill="#1A2240" text-anchor="middle">微服务</text>
+  <text x="959" y="298" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">Microservices</text>
+
+  <!-- Serverless header -->
+  <rect x="1164" y="200" width="356" height="120" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <rect x="1164" y="200" width="356" height="14" fill="#375DFE"/>
+  <text x="1342" y="262" font-size="32" font-weight="700" fill="#1A2240" text-anchor="middle">Serverless</text>
+  <text x="1342" y="298" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">函数即服务</text>
+
+  <!-- ============================================================= -->
+  <!-- ROW 1 · 部署与运维复杂度  (y=348, h=150) -->
+  <rect x="80" y="348" width="300" height="150" fill="#1A2240"/>
+  <text x="100" y="412" font-size="23" font-weight="700" fill="#FDF0E0">部署与</text>
+  <text x="100" y="444" font-size="23" font-weight="700" fill="#FDF0E0">运维复杂度</text>
+  <text x="100" y="478" font-size="16" font-weight="500" fill="#FDF0E0">Deploy / Ops</text>
+  <!-- monolith: WINNER (simple to deploy) -->
+  <rect x="400" y="348" width="354" height="150" fill="#375DFE"/>
+  <text x="577" y="408" font-size="20" font-weight="700" fill="#FDF0E0" text-anchor="middle">一个产物一键部署</text>
+  <text x="577" y="440" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">运维面最小</text>
+  <text x="577" y="472" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">最易上手</text>
+  <!-- microservices: neutral -->
+  <rect x="782" y="348" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="959" y="408" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">多服务编排</text>
+  <text x="959" y="440" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">需 K8s / 服务网格</text>
+  <text x="959" y="472" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">运维成本最高</text>
+  <!-- serverless: neutral -->
+  <rect x="1164" y="348" width="356" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="1342" y="408" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">免运维服务器</text>
+  <text x="1342" y="440" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">绑定平台与配置</text>
+  <text x="1342" y="472" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">心智在编排上</text>
+
+  <!-- ROW 2 · 伸缩性  (y=522, h=150) -->
+  <rect x="80" y="522" width="300" height="150" fill="#1A2240"/>
+  <text x="100" y="592" font-size="23" font-weight="700" fill="#FDF0E0">伸缩性</text>
+  <text x="100" y="628" font-size="16" font-weight="500" fill="#FDF0E0">Scaling model</text>
+  <!-- monolith: neutral -->
+  <rect x="400" y="522" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="577" y="582" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">整机横向复制</text>
+  <text x="577" y="614" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">无法按模块伸缩</text>
+  <text x="577" y="646" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">粒度粗</text>
+  <!-- microservices: neutral-good -->
+  <rect x="782" y="522" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="959" y="582" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">按服务独立扩缩</text>
+  <text x="959" y="614" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">热点单独加副本</text>
+  <text x="959" y="646" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">需自管阈值</text>
+  <!-- serverless: WINNER -->
+  <rect x="1164" y="522" width="356" height="150" fill="#375DFE"/>
+  <text x="1342" y="582" font-size="20" font-weight="700" fill="#FDF0E0" text-anchor="middle">按请求自动伸缩</text>
+  <text x="1342" y="614" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">可缩容到零</text>
+  <text x="1342" y="646" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">弹性最强</text>
+
+  <!-- ROW 3 · 成本曲线  (y=696, h=150) -->
+  <rect x="80" y="696" width="300" height="150" fill="#1A2240"/>
+  <text x="100" y="766" font-size="23" font-weight="700" fill="#FDF0E0">成本曲线</text>
+  <text x="100" y="802" font-size="16" font-weight="500" fill="#FDF0E0">闲置 vs 峰值</text>
+  <!-- monolith: neutral -->
+  <rect x="400" y="696" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="577" y="756" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">固定常驻成本</text>
+  <text x="577" y="788" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">低负载也付全价</text>
+  <text x="577" y="820" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">可预测</text>
+  <!-- microservices: neutral -->
+  <rect x="782" y="696" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="959" y="756" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">常驻 × 服务数</text>
+  <text x="959" y="788" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">冗余副本叠加</text>
+  <text x="959" y="820" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">基线偏高</text>
+  <!-- serverless: WINNER at idle, caveat -->
+  <rect x="1164" y="696" width="356" height="150" fill="#375DFE"/>
+  <text x="1342" y="756" font-size="20" font-weight="700" fill="#FDF0E0" text-anchor="middle">闲置近乎零成本</text>
+  <text x="1342" y="788" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">按调用计费</text>
+  <text x="1342" y="820" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">高峰单价更贵</text>
+
+  <!-- ROW 4 · 团队组织与边界  (y=870, h=150) -->
+  <rect x="80" y="870" width="300" height="150" fill="#1A2240"/>
+  <text x="100" y="934" font-size="23" font-weight="700" fill="#FDF0E0">团队组织</text>
+  <text x="100" y="966" font-size="23" font-weight="700" fill="#FDF0E0">与边界</text>
+  <text x="100" y="1000" font-size="16" font-weight="500" fill="#FDF0E0">Team topology</text>
+  <!-- monolith: neutral, small teams ok -->
+  <rect x="400" y="870" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="577" y="930" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">单一代码库</text>
+  <text x="577" y="962" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">小团队协作顺</text>
+  <text x="577" y="994" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">大团队易踩脚</text>
+  <!-- microservices: WINNER for ownership -->
+  <rect x="782" y="870" width="354" height="150" fill="#375DFE"/>
+  <text x="959" y="930" font-size="20" font-weight="700" fill="#FDF0E0" text-anchor="middle">服务即归属边界</text>
+  <text x="959" y="962" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">团队各自演进</text>
+  <text x="959" y="994" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">契合多团队</text>
+  <!-- serverless: neutral -->
+  <rect x="1164" y="870" width="356" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="1342" y="930" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">以函数为单元</text>
+  <text x="1342" y="962" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">边界更细更碎</text>
+  <text x="1342" y="994" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">易失全局视图</text>
+
+  <!-- ROW 5 · 故障隔离与爆炸半径  (y=1044, h=150) -->
+  <rect x="80" y="1044" width="300" height="150" fill="#1A2240"/>
+  <text x="100" y="1108" font-size="23" font-weight="700" fill="#FDF0E0">故障隔离</text>
+  <text x="100" y="1140" font-size="23" font-weight="700" fill="#FDF0E0">与爆炸半径</text>
+  <text x="100" y="1174" font-size="16" font-weight="500" fill="#FDF0E0">Blast radius</text>
+  <!-- monolith: LOSER -->
+  <rect x="400" y="1044" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="577" y="1104" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">一处崩全进程崩</text>
+  <text x="577" y="1136" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">爆炸半径最大</text>
+  <text x="577" y="1168" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">耦合风险高</text>
+  <!-- microservices: WINNER -->
+  <rect x="782" y="1044" width="354" height="150" fill="#375DFE"/>
+  <text x="959" y="1104" font-size="20" font-weight="700" fill="#FDF0E0" text-anchor="middle">故障被边界圈住</text>
+  <text x="959" y="1136" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">可降级隔离</text>
+  <text x="959" y="1168" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">半径可控</text>
+  <!-- serverless: good -->
+  <rect x="1164" y="1044" width="356" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="1342" y="1104" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">函数级隔离</text>
+  <text x="1342" y="1136" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">单函数失败影响小</text>
+  <text x="1342" y="1168" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">依赖平台稳定</text>
+
+  <!-- ROW 6 · 本地开发与可调试性  (y=1218, h=150) -->
+  <rect x="80" y="1218" width="300" height="150" fill="#1A2240"/>
+  <text x="100" y="1282" font-size="23" font-weight="700" fill="#FDF0E0">本地开发</text>
+  <text x="100" y="1314" font-size="23" font-weight="700" fill="#FDF0E0">与可调试性</text>
+  <text x="100" y="1348" font-size="16" font-weight="500" fill="#FDF0E0">Local dev</text>
+  <!-- monolith: WINNER -->
+  <rect x="400" y="1218" width="354" height="150" fill="#375DFE"/>
+  <text x="577" y="1278" font-size="20" font-weight="700" fill="#FDF0E0" text-anchor="middle">一把启动全栈</text>
+  <text x="577" y="1310" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">断点跟到底</text>
+  <text x="577" y="1342" font-size="18" font-weight="500" fill="#FDF0E0" text-anchor="middle">调试最直接</text>
+  <!-- microservices: neutral-loser -->
+  <rect x="782" y="1218" width="354" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="959" y="1278" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">需起多服务</text>
+  <text x="959" y="1310" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">跨服务链路追踪</text>
+  <text x="959" y="1342" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">复现成本高</text>
+  <!-- serverless: loser -->
+  <rect x="1164" y="1218" width="356" height="150" fill="#FFFFFF" stroke="#1A2240" stroke-width="4"/>
+  <text x="1342" y="1278" font-size="20" font-weight="700" fill="#1A2240" text-anchor="middle">难完整本地模拟</text>
+  <text x="1342" y="1310" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">冷启动与事件难复现</text>
+  <text x="1342" y="1342" font-size="18" font-weight="500" fill="#1A2240" text-anchor="middle">强依赖云端</text>
+
+  <!-- ============================================================= -->
+  <!-- separator fold: marks the verdict as the conclusion, not another row -->
+  <rect x="80" y="1398" width="1440" height="6" fill="#1A2240"/>
+
+  <!-- ROW 7 · 适用阶段  FOCAL verdict band — taller (h=200) to break the row baseline and win the eye  (y=1430) -->
+  <rect x="80" y="1430" width="300" height="200" fill="#1A2240"/>
+  <text x="100" y="1512" font-size="30" font-weight="900" fill="#FDF0E0">适用阶段</text>
+  <text x="100" y="1550" font-size="18" font-weight="500" fill="#FDF0E0">该选谁</text>
+  <text x="100" y="1576" font-size="16" font-weight="500" fill="#FDF0E0">When to choose</text>
+  <!-- monolith verdict -->
+  <rect x="400" y="1430" width="354" height="200" fill="#375DFE"/>
+  <text x="577" y="1502" font-size="26" font-weight="900" fill="#FDF0E0" text-anchor="middle">起步与小团队</text>
+  <text x="577" y="1544" font-size="19" font-weight="500" fill="#FDF0E0" text-anchor="middle">MVP · 验证业务</text>
+  <text x="577" y="1578" font-size="19" font-weight="500" fill="#FDF0E0" text-anchor="middle">先跑起来再说</text>
+  <!-- microservices verdict -->
+  <rect x="782" y="1430" width="354" height="200" fill="#375DFE"/>
+  <text x="959" y="1502" font-size="26" font-weight="900" fill="#FDF0E0" text-anchor="middle">规模化组织</text>
+  <text x="959" y="1544" font-size="19" font-weight="500" fill="#FDF0E0" text-anchor="middle">多团队 · 复杂域</text>
+  <text x="959" y="1578" font-size="19" font-weight="500" fill="#FDF0E0" text-anchor="middle">边界已清晰</text>
+  <!-- serverless verdict -->
+  <rect x="1164" y="1430" width="356" height="200" fill="#375DFE"/>
+  <text x="1342" y="1502" font-size="26" font-weight="900" fill="#FDF0E0" text-anchor="middle">突发与事件驱动</text>
+  <text x="1342" y="1544" font-size="19" font-weight="500" fill="#FDF0E0" text-anchor="middle">流量不均 · 胶水</text>
+  <text x="1342" y="1578" font-size="19" font-weight="500" fill="#FDF0E0" text-anchor="middle">按需付费</text>
+</svg>

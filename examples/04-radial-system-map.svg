@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 1240">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 4 L0 8 z"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1680" height="1240" fill="#EFE9D9"/>
+
+  <!-- title -->
+  <text x="80" y="96" font-size="62" font-weight="900" fill="#0F0F0F">现代 LLM Agent 系统架构</text>
+  <text x="82" y="150" font-size="24" font-weight="500" fill="#2A2A2A">以推理内核为中枢，工具 · 记忆 · 检索 · 编排 · 协作 · 护栏 · 观测 · 外部 I/O 环绕其上</text>
+
+  <!-- ================= CONNECTORS (drawn first, under nodes) ================= -->
+  <!-- hub center ~ (840, 700). Spokes hub<->satellite. -->
+
+  <!-- 1 Tool use  (top-left) hub<->node, bidirectional: call out / result in -->
+  <line x1="688" y1="590" x2="470" y2="438" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="500" y1="452" x2="718" y2="604" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="540" y="512" font-size="15" font-weight="600" fill="#1F8A4C">函数调用</text>
+  <text x="600" y="556" font-size="15" font-weight="600" fill="#E85A1F">结果回填</text>
+
+  <!-- 2 Memory (top) read/write double-headed -->
+  <line x1="840" y1="540" x2="840" y2="444" stroke="#0F0F0F" stroke-width="3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="856" y="498" font-size="15" font-weight="600" fill="#0F0F0F">读 / 写上下文</text>
+
+  <!-- 3 RAG (top-right) retrieved context into hub -->
+  <line x1="1210" y1="450" x2="980" y2="592" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1126" y="512" font-size="15" font-weight="600" fill="#1F8A4C" text-anchor="end">注入检索上下文</text>
+
+  <!-- 4 External I/O (right) tool action out / observation in -->
+  <line x1="1060" y1="678" x2="1230" y2="678" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="1230" y1="722" x2="1060" y2="722" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1145" y="666" font-size="15" font-weight="600" fill="#1F8A4C" text-anchor="middle">动作执行</text>
+  <text x="1145" y="744" font-size="15" font-weight="600" fill="#E85A1F" text-anchor="middle">观测返回</text>
+
+  <!-- 5 Multi-agent (bottom-right) delegate / report -->
+  <line x1="990" y1="848" x2="1190" y2="980" stroke="#1F8A4C" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="1158" y1="1002" x2="958" y2="862" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1086" y="912" font-size="15" font-weight="600" fill="#1F8A4C">委派子任务</text>
+  <text x="996" y="956" font-size="15" font-weight="600" fill="#E85A1F">汇总回报</text>
+
+  <!-- 6 Guardrails (bottom) — sits across the hub I/O, double sided -->
+  <line x1="840" y1="862" x2="840" y2="968" stroke="#0F0F0F" stroke-width="3" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="856" y="924" font-size="15" font-weight="600" fill="#0F0F0F">输入过滤 / 输出校验</text>
+
+  <!-- 7 Observability (bottom-left) traces emitted from hub -->
+  <line x1="690" y1="848" x2="510" y2="980" stroke="#0F0F0F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="566" y="912" font-size="15" font-weight="600" fill="#0F0F0F" text-anchor="end">埋点 · 追踪 · 计量</text>
+
+  <!-- ===== Orchestration control loop (left) — closed loop of orange arrows ===== -->
+  <!-- loop sits at far left, hub feeds it -->
+  <line x1="630" y1="700" x2="372" y2="700" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="500" y="688" font-size="15" font-weight="600" fill="#E85A1F" text-anchor="middle">驱动控制循环</text>
+
+  <!-- ================= SATELLITE NODES ================= -->
+
+  <!-- 1 Tool use / function calling  (top-left) -->
+  <rect x="246" y="318" width="276" height="128" fill="#E85A1F"/>
+  <rect x="234" y="306" width="276" height="128" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <rect x="234" y="306" width="276" height="14" fill="#F5C518"/>
+  <text x="372" y="360" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">工具调用</text>
+  <text x="372" y="392" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">Function Calling</text>
+  <text x="372" y="418" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">结构化参数 · 工具路由</text>
+
+  <!-- 2 Memory (top center) — short-term vs long-term -->
+  <rect x="714" y="302" width="276" height="150" fill="#0F0F0F"/>
+  <rect x="702" y="290" width="276" height="150" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="840" y="332" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">记忆系统</text>
+  <text x="840" y="368" font-size="16" font-weight="600" fill="#1F8A4C" text-anchor="middle">短期：上下文窗口</text>
+  <text x="840" y="398" font-size="16" font-weight="600" fill="#E85A1F" text-anchor="middle">长期：向量库</text>
+  <text x="840" y="424" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">会话状态 · 持久画像</text>
+
+  <!-- 3 RAG (top-right) — chunk -> embed -> vecdb -> rerank -->
+  <rect x="1170" y="306" width="318" height="150" fill="#1F8A4C"/>
+  <rect x="1158" y="294" width="318" height="150" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="1317" y="336" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">检索增强 RAG</text>
+  <text x="1317" y="372" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">切块 → 向量化 → 向量库</text>
+  <text x="1317" y="400" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">→ 重排序 Rerank</text>
+  <text x="1317" y="428" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">召回相关知识片段</text>
+
+  <!-- 4 External I/O (right) -->
+  <rect x="1252" y="612" width="300" height="200" fill="#E85A1F"/>
+  <rect x="1240" y="600" width="300" height="200" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <rect x="1240" y="600" width="300" height="14" fill="#F5C518"/>
+  <text x="1390" y="654" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">外部 I/O</text>
+  <text x="1390" y="692" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">API · 浏览器</text>
+  <text x="1390" y="722" font-size="17" font-weight="500" fill="#2A2A2A" text-anchor="middle">代码执行 · 文件系统</text>
+  <text x="1390" y="760" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">与真实世界交互</text>
+
+  <!-- 5 Multi-agent (bottom-right) -->
+  <rect x="1170" y="986" width="318" height="150" fill="#1F8A4C"/>
+  <rect x="1158" y="974" width="318" height="150" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="1317" y="1016" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">多智能体协作</text>
+  <text x="1317" y="1052" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">主控 → 子代理委派</text>
+  <text x="1317" y="1080" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">角色分工 · 并行执行</text>
+  <text x="1317" y="1108" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">结果聚合回主控</text>
+
+  <!-- 6 Guardrails (bottom center) -->
+  <rect x="714" y="994" width="276" height="150" fill="#0F0F0F"/>
+  <rect x="702" y="982" width="276" height="150" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="840" y="1024" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">护栏与安全</text>
+  <text x="840" y="1060" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">输入过滤 · 输出校验</text>
+  <text x="840" y="1088" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">权限管控 · 越权拦截</text>
+  <text x="840" y="1114" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">高危动作需审批</text>
+
+  <!-- 7 Observability (bottom-left) -->
+  <rect x="246" y="986" width="276" height="150" fill="#E85A1F"/>
+  <rect x="234" y="974" width="276" height="150" fill="#EFE9D9" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="372" y="1016" font-size="26" font-weight="700" fill="#0F0F0F" text-anchor="middle">可观测性</text>
+  <text x="372" y="1052" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">链路追踪 · 评测 Eval</text>
+  <text x="372" y="1080" font-size="16" font-weight="500" fill="#2A2A2A" text-anchor="middle">Token / 成本计量</text>
+  <text x="372" y="1106" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">线上质量监控</text>
+
+  <!-- ================= ORCHESTRATION CONTROL LOOP (left) ================= -->
+  <!-- a distinct framed block with a closed cycle of orange arrows -->
+  <rect x="104" y="556" width="268" height="298" fill="#E4DCC4" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="238" y="596" font-size="24" font-weight="700" fill="#0F0F0F" text-anchor="middle">编排控制环</text>
+  <text x="238" y="620" font-size="15" font-weight="500" fill="#2A2A2A" text-anchor="middle">Control Loop</text>
+  <!-- four stage chips -->
+  <rect x="138" y="640" width="90" height="48" fill="#1F8A4C"/>
+  <text x="183" y="670" font-size="18" font-weight="700" fill="#FBF6E9" text-anchor="middle">规划</text>
+  <rect x="248" y="640" width="90" height="48" fill="#1F8A4C"/>
+  <text x="293" y="670" font-size="18" font-weight="700" fill="#FBF6E9" text-anchor="middle">行动</text>
+  <rect x="248" y="762" width="90" height="48" fill="#1F8A4C"/>
+  <text x="293" y="792" font-size="18" font-weight="700" fill="#FBF6E9" text-anchor="middle">观察</text>
+  <rect x="138" y="762" width="90" height="48" fill="#1F8A4C"/>
+  <text x="183" y="792" font-size="18" font-weight="700" fill="#FBF6E9" text-anchor="middle">反思</text>
+  <!-- loop arrows: plan->act->observe->reflect->plan -->
+  <line x1="228" y1="664" x2="248" y2="664" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="293" y1="688" x2="293" y2="762" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="248" y1="786" x2="228" y2="786" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+  <line x1="183" y1="762" x2="183" y2="688" stroke="#E85A1F" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- ================= HUB (focal, largest, drawn last/on top) ================= -->
+  <rect x="642" y="562" width="420" height="300" fill="#E85A1F"/>
+  <rect x="630" y="550" width="420" height="300" fill="#1F8A4C" stroke="#0F0F0F" stroke-width="4"/>
+  <text x="840" y="668" font-size="62" font-weight="900" fill="#FBF6E9" text-anchor="middle">LLM 内核</text>
+  <text x="840" y="724" font-size="28" font-weight="700" fill="#FBF6E9" text-anchor="middle">推理 · 规划核心</text>
+  <text x="840" y="772" font-size="20" font-weight="500" fill="#DCF4A2" text-anchor="middle">理解意图 · 拆解任务 · 决策下一步</text>
+</svg>

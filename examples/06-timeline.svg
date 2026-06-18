@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1180">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 4 L0 8 z"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="2400" height="1180" fill="#F5F0E8"/>
+
+  <!-- ===== title ===== -->
+  <text x="80" y="120" font-size="76" font-weight="900" fill="#1A1A1A">人工智能发展简史</text>
+  <rect x="84" y="150" width="560" height="8" fill="#E85D5D"/>
+  <text x="86" y="200" font-size="26" font-weight="500" fill="#6B6B6B">从图灵测试到大模型时代　1950 → 2026</text>
+
+  <!-- ===== era bands (behind axis); widths vary, 2020s widest + coral hero ===== -->
+  <!-- band x ranges: 1950s[80-470] 70s80s[470-900] 90s00s[900-1330] 2010s[1330-1760] 2020s[1760-2320] -->
+  <!-- band fills: neutral cream-dark tints; 2020s = coral hero -->
+  <rect x="80"   y="312" width="390" height="496" fill="#EDE6DA"/>
+  <rect x="470"  y="312" width="430" height="496" fill="#E8E0D4"/>
+  <rect x="900"  y="312" width="430" height="496" fill="#EDE6DA"/>
+  <rect x="1330" y="312" width="430" height="496" fill="#E8E0D4"/>
+  <rect x="1760" y="312" width="560" height="496" fill="#E85D5D"/>
+
+  <!-- era band caps (label strips at top of each band) -->
+  <text x="100"  y="350" font-size="22" font-weight="700" fill="#E85D5D">1950s</text>
+  <text x="100"  y="386" font-size="30" font-weight="700" fill="#1A1A1A">奠基</text>
+
+  <text x="490"  y="350" font-size="22" font-weight="700" fill="#E85D5D">1970s – 80s</text>
+  <text x="490"  y="386" font-size="30" font-weight="700" fill="#1A1A1A">寒冬与专家系统</text>
+
+  <text x="920"  y="350" font-size="22" font-weight="700" fill="#E85D5D">1990s – 2000s</text>
+  <text x="920"  y="386" font-size="30" font-weight="700" fill="#1A1A1A">统计学习</text>
+
+  <text x="1350" y="350" font-size="22" font-weight="700" fill="#E85D5D">2010s</text>
+  <text x="1350" y="386" font-size="30" font-weight="700" fill="#1A1A1A">深度学习</text>
+
+  <text x="2300" y="350" font-size="22" font-weight="700" fill="#FFFFFF" text-anchor="end">2020s</text>
+  <text x="2300" y="386" font-size="26" font-weight="700" fill="#FFFFFF" text-anchor="end">大模型时代</text>
+
+  <!-- ===== main axis ===== -->
+  <line x1="80" y1="600" x2="2320" y2="600" stroke="#1A1A1A" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <!-- ============================================================ -->
+  <!-- MILESTONE CARDS: alternate above (y~430-560) / below (y~640-790) -->
+  <!-- each: coral dot on axis + stub + white card (year subhead + name body) -->
+  <!-- card w=300 h=120; dot r=11 -->
+  <!-- ============================================================ -->
+
+  <!-- 1950s: 图灵测试(1950) above ; Dartmouth(1956) below ; Perceptron(1958) above -->
+  <!-- 图灵测试 1950 (above) tick at x=150 -->
+  <line x1="150" y1="600" x2="150" y2="480" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="150" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="100" y="420" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="100" y="420" width="270" height="5" fill="#E85D5D"/>
+  <text x="118" y="450" font-size="24" font-weight="700" fill="#E85D5D">1950</text>
+  <text x="118" y="475" font-size="19" font-weight="500" fill="#1A1A1A">图灵测试</text>
+
+  <!-- Dartmouth 1956 (below) tick at x=300 -->
+  <line x1="300" y1="600" x2="300" y2="720" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="300" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="250" y="720" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="250" y="720" width="270" height="5" fill="#E85D5D"/>
+  <text x="268" y="750" font-size="24" font-weight="700" fill="#E85D5D">1956</text>
+  <text x="268" y="775" font-size="19" font-weight="500" fill="#1A1A1A">Dartmouth 会议</text>
+
+  <!-- Perceptron 1958 (above) tick at x=430 -->
+  <line x1="430" y1="600" x2="430" y2="500" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="430" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="395" y="440" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="395" y="440" width="270" height="5" fill="#E85D5D"/>
+  <text x="413" y="470" font-size="24" font-weight="700" fill="#E85D5D">1958</text>
+  <text x="413" y="495" font-size="19" font-weight="500" fill="#1A1A1A">感知机 Perceptron</text>
+
+  <!-- 1970s-80s: 第一次寒冬 (below) ; 专家系统兴起 (above) ; 反向传播1986 (below) -->
+  <!-- 第一次 AI 寒冬 (below) tick at x=560 -->
+  <line x1="560" y1="600" x2="560" y2="720" stroke="#6B6B6B" stroke-width="2.5"/>
+  <circle cx="560" cy="600" r="11" fill="#6B6B6B"/>
+  <rect x="540" y="720" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="540" y="720" width="270" height="5" fill="#6B6B6B"/>
+  <text x="558" y="750" font-size="22" font-weight="700" fill="#6B6B6B">1974~</text>
+  <text x="558" y="775" font-size="19" font-weight="500" fill="#1A1A1A">第一次 AI 寒冬</text>
+
+  <!-- 专家系统兴起 (above) tick at x=700 -->
+  <line x1="700" y1="600" x2="700" y2="500" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="700" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="680" y="440" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="680" y="440" width="270" height="5" fill="#E85D5D"/>
+  <text x="698" y="470" font-size="22" font-weight="700" fill="#E85D5D">1980s</text>
+  <text x="698" y="495" font-size="19" font-weight="500" fill="#1A1A1A">专家系统兴起</text>
+
+  <!-- 反向传播普及 1986 (below) tick at x=840 -->
+  <line x1="840" y1="600" x2="840" y2="720" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="840" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="820" y="720" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="820" y="720" width="270" height="5" fill="#E85D5D"/>
+  <text x="838" y="750" font-size="24" font-weight="700" fill="#E85D5D">1986</text>
+  <text x="838" y="775" font-size="19" font-weight="500" fill="#1A1A1A">反向传播普及</text>
+
+  <!-- 1990s-2000s: SVM (above) ; 深蓝1997 (below) ; 统计机器学习崛起 (above) -->
+  <!-- SVM (above) tick at x=970 -->
+  <line x1="970" y1="600" x2="970" y2="500" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="970" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="940" y="440" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="940" y="440" width="270" height="5" fill="#E85D5D"/>
+  <text x="958" y="470" font-size="22" font-weight="700" fill="#E85D5D">1995</text>
+  <text x="958" y="495" font-size="19" font-weight="500" fill="#1A1A1A">支持向量机 SVM</text>
+
+  <!-- 深蓝 1997 (below) tick at x=1110 -->
+  <line x1="1110" y1="600" x2="1110" y2="720" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="1110" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="1090" y="720" width="300" height="62" fill="#FFFFFF"/>
+  <rect x="1090" y="720" width="300" height="5" fill="#E85D5D"/>
+  <text x="1108" y="750" font-size="24" font-weight="700" fill="#E85D5D">1997</text>
+  <text x="1108" y="775" font-size="19" font-weight="500" fill="#1A1A1A">深蓝击败卡斯帕罗夫</text>
+
+  <!-- 统计机器学习崛起 (above) tick at x=1260 -->
+  <line x1="1260" y1="600" x2="1260" y2="500" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="1260" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="1240" y="440" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="1240" y="440" width="270" height="5" fill="#E85D5D"/>
+  <text x="1258" y="470" font-size="22" font-weight="700" fill="#E85D5D">2000s</text>
+  <text x="1258" y="495" font-size="19" font-weight="500" fill="#1A1A1A">统计机器学习崛起</text>
+
+  <!-- 2010s: AlexNet2012 (below) ; AlphaGo2016 (above) ; Transformer2017 (below) -->
+  <!-- AlexNet 2012 (below) tick at x=1400 -->
+  <line x1="1400" y1="600" x2="1400" y2="720" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="1400" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="1380" y="720" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="1380" y="720" width="270" height="5" fill="#E85D5D"/>
+  <text x="1398" y="750" font-size="24" font-weight="700" fill="#E85D5D">2012</text>
+  <text x="1398" y="775" font-size="19" font-weight="500" fill="#1A1A1A">AlexNet</text>
+
+  <!-- AlphaGo 2016 (above) tick at x=1545 -->
+  <line x1="1545" y1="600" x2="1545" y2="500" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="1545" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="1525" y="440" width="270" height="62" fill="#FFFFFF"/>
+  <rect x="1525" y="440" width="270" height="5" fill="#E85D5D"/>
+  <text x="1543" y="470" font-size="24" font-weight="700" fill="#E85D5D">2016</text>
+  <text x="1543" y="495" font-size="19" font-weight="500" fill="#1A1A1A">AlphaGo</text>
+
+  <!-- Transformer 2017 (below) tick at x=1690 -->
+  <line x1="1690" y1="600" x2="1690" y2="720" stroke="#E85D5D" stroke-width="2.5"/>
+  <circle cx="1690" cy="600" r="11" fill="#E85D5D"/>
+  <rect x="1670" y="720" width="290" height="62" fill="#FFFFFF"/>
+  <rect x="1670" y="720" width="290" height="5" fill="#E85D5D"/>
+  <text x="1688" y="750" font-size="24" font-weight="700" fill="#E85D5D">2017</text>
+  <text x="1688" y="775" font-size="19" font-weight="500" fill="#1A1A1A">Transformer 论文</text>
+
+  <!-- ===== 2020s hero era: white cards on coral; ChatGPT = hero ===== -->
+  <!-- dots evenly placed & each card centred on its dot: 1850 / 1990(hero) / 2120 / 2250 -->
+
+  <!-- GPT-3 2020 (above) dot x=1850, card centred 1730-1970 -->
+  <line x1="1850" y1="600" x2="1850" y2="502" stroke="#FFFFFF" stroke-width="2.5"/>
+  <circle cx="1850" cy="600" r="11" fill="#FFFFFF"/>
+  <rect x="1730" y="440" width="240" height="62" fill="#FFFFFF"/>
+  <text x="1750" y="470" font-size="24" font-weight="700" fill="#E85D5D">2020</text>
+  <text x="1750" y="495" font-size="19" font-weight="500" fill="#1A1A1A">GPT-3</text>
+
+  <!-- HERO: ChatGPT 2022 (above, largest) dot x=1990; stem reaches axis -->
+  <line x1="1990" y1="600" x2="1990" y2="452" stroke="#1A1A1A" stroke-width="4"/>
+  <circle cx="1990" cy="600" r="18" fill="#1A1A1A"/>
+  <circle cx="1990" cy="600" r="8" fill="#FFFFFF"/>
+  <rect x="1818" y="318" width="346" height="134" fill="#1A1A1A"/>
+  <rect x="1818" y="318" width="346" height="8" fill="#E85D5D"/>
+  <text x="1842" y="378" font-size="40" font-weight="900" fill="#FFFFFF">2022</text>
+  <text x="1842" y="420" font-size="27" font-weight="700" fill="#FFFFFF">ChatGPT 引爆大模型</text>
+
+  <!-- 多模态与 Agent 2023-24 (below) dot x=2120, card centred 2000-2240 -->
+  <line x1="2120" y1="600" x2="2120" y2="718" stroke="#FFFFFF" stroke-width="2.5"/>
+  <circle cx="2120" cy="600" r="11" fill="#FFFFFF"/>
+  <rect x="2000" y="720" width="240" height="62" fill="#FFFFFF"/>
+  <text x="2020" y="750" font-size="22" font-weight="700" fill="#E85D5D">2023–24</text>
+  <text x="2020" y="775" font-size="19" font-weight="500" fill="#1A1A1A">多模态与 Agent</text>
+
+  <!-- 推理模型与普及 2025-26 (above) dot x=2250, card right-aligned 2065-2310 -->
+  <line x1="2250" y1="600" x2="2250" y2="502" stroke="#FFFFFF" stroke-width="2.5"/>
+  <circle cx="2250" cy="600" r="11" fill="#FFFFFF"/>
+  <rect x="2065" y="440" width="245" height="62" fill="#FFFFFF"/>
+  <text x="2085" y="470" font-size="22" font-weight="700" fill="#E85D5D">2025–26</text>
+  <text x="2085" y="495" font-size="19" font-weight="500" fill="#1A1A1A">推理模型与普及</text>
+</svg>
