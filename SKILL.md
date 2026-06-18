@@ -95,7 +95,11 @@ uniform grid. Keep it to a few lines; it is for you, not the board.
    colour, isolation, position). Exactly one primary focus per board.
 3. **Colour strategy + palette.** Choose a strategy on the commitment axis — **Restrained** (tinted
    ground + one accent), **Committed** (one colour carries 30–60%), or **Full** (3–4 named roles) —
-   *then* pick the CATALOG palette that serves it. Strategy first, swatches second.
+   *then* pick the [`CATALOG.md`](CATALOG.md) palette that serves it. Strategy first, swatches second.
+   Prefer an anchor (they're reliable, swappable skins). If none fits the mood, **generate** a palette
+   per [`templates/GENERATE.md`](templates/GENERATE.md) — it comes out in the same frontmatter shape, so
+   it stays swappable; keep it inline for this board (GENERATE.md covers where a generated palette can
+   live — don't write it into the skill dir at runtime).
 4. **Type roles.** Assign the COMPOSITION.md type scale to the content: what is Display, what is
    Heading, what is Body, what is Caption. Hierarchy comes from this assignment, not from drawing.
 5. **Anti-cliché check.** Write one line: *"The reflex version of this board is ___; I am avoiding it
@@ -158,17 +162,21 @@ Write the SVG into a Feishu doc as an editable whiteboard (commands in [`RULES.m
 view the **live** board image and fix any remaining layout issues (the export is faithful for layout
 and fills, but not text colour — verify colour via `--output_as raw` or the live doc).
 
-Deliver **both**: the **Feishu doc link** and the **rendered image**. Then tell the user they can
-**switch to a different palette** any time and you'll re-render the same composition in it — note that
-a palette swap keeps the composition; only the colours change.
+Deliver **both**: the **Feishu doc link** and the **rendered image** — and the rendered image is the
+local `diagram.png` from step 3, *not* the Feishu image export (that one comes back as a fixed square
+preview with the board floating in whitespace; it's for verifying the live board, not for sharing — see
+RULES.md step 4). Then tell the user they can **switch to a different palette** any time and you'll
+re-render the same composition in it — note that a palette swap keeps the composition; only the colours change.
 
 ## Files
 
 - **[`RULES.md`](RULES.md)** — medium hard rules + exact build/write/verify commands. Always read.
 - **[`COMPOSITION.md`](COMPOSITION.md)** — archetype library, type scale, spacing grid, anti-cliché. The core.
 - **[`CRITIQUE.md`](CRITIQUE.md)** — the post-render design rubric, per-axis fixes, and independent review.
-- **[`CATALOG.md`](CATALOG.md)** — the 35 palettes with vibe/formality. Pick from this table alone.
+- **[`CATALOG.md`](CATALOG.md)** — the palettes with vibe/formality. Pick from this table alone. **Generated** from `templates/` — don't hand-edit.
 - **[`examples/`](examples/)** — gold-standard boards per archetype; start from the matching one.
-- **[`templates/<slug>/design.md`](templates/)** — one per palette; open only the chosen one.
+- **[`templates/<slug>/design.md`](templates/)** — one per palette (frontmatter: mood + colours + stroke + a `catalog:` block); open only the chosen one. To add a palette, drop a folder with a `design.md` and run `node scripts/build-catalog.mjs`.
+- **[`templates/GENERATE.md`](templates/GENERATE.md)** — how to generate a fresh palette (same frontmatter shape) when no anchor fits, and how to persist it as a template.
 - **[`scripts/fit-check.mjs`](scripts/fit-check.mjs)** — pre-render text-fit / gutter / bleed predictor.
+- **[`scripts/build-catalog.mjs`](scripts/build-catalog.mjs)** — regenerate `CATALOG.md` from `templates/` (`--check` verifies it's current).
 - **[`scripts/preflight.sh`](scripts/preflight.sh)** — dependency and auth check.

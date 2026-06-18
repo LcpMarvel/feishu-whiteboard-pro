@@ -6,7 +6,7 @@ intentional spacing. The board it produces is a real, **editable** Feishu whiteb
 not a screenshot.
 
 It builds on [beautiful-feishu-whiteboard](https://github.com/zarazhangrui/beautiful-feishu-whiteboard)
-(its 35 colour palettes and the hard rules of the SVG-whiteboard medium) and adds the layer that was
+(its colour palettes and the hard rules of the SVG-whiteboard medium) and adds the layer that was
 missing: **how to compose, and how to tell whether the result is actually good.**
 
 ## What it adds over a palette library
@@ -99,14 +99,16 @@ infographic, diagram, or visual explainer.
 | [`COMPOSITION.md`](COMPOSITION.md) | Archetype library (coordinate skeletons), type scale, spacing grid, anti-cliché list — the core |
 | [`CRITIQUE.md`](CRITIQUE.md) | Post-render design rubric (5 axes) + independent-review instructions |
 | [`RULES.md`](RULES.md) | Hard limits of the Feishu SVG whiteboard medium, verified empirically |
-| [`CATALOG.md`](CATALOG.md) + [`templates/`](templates/) | 35 colour palettes |
+| [`templates/`](templates/) | A tight set of curated colour palettes (one `design.md` each) — the single source of truth |
+| [`CATALOG.md`](CATALOG.md) | The pick-a-style table, **generated** from `templates/` by `scripts/build-catalog.mjs` |
 | [`examples/`](examples/) | Gold-standard boards per archetype |
-| [`scripts/`](scripts/) | `fit-check.mjs` (pre-render predictor) + `preflight.sh` |
+| [`scripts/`](scripts/) | `fit-check.mjs` (pre-render predictor), `build-catalog.mjs` (regenerate CATALOG), `preflight.sh` |
 
 ## Credits & license
 
-MIT. The 35 palettes and the medium rules are adapted from
+MIT. A curated, distilled subset of the palettes and the medium rules are adapted from
 **[beautiful-feishu-whiteboard](https://github.com/zarazhangrui/beautiful-feishu-whiteboard)** by
 **Zara Zhang ([@zarazhangrui](https://github.com/zarazhangrui))** — © Zara Zhang, MIT. The composition,
-critique, fit-check, and gated-pipeline layers are original additions. The design-judgment approach is
-inspired by the **impeccable / frontend-design** skills (no code copied). See [`LICENSE`](LICENSE).
+critique, fit-check, gated-pipeline, and palette-generation layers are original additions. The
+design-judgment approach is inspired by the **impeccable / frontend-design** skills (no code copied).
+See [`LICENSE`](LICENSE).

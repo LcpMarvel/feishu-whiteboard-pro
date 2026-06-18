@@ -1,8 +1,9 @@
 MIT License
 
-Copyright (c) 2026 Zara Zhang (@zarazhangrui) — palette templates and medium rules,
-  adapted from the beautiful-feishu-whiteboard project
-Copyright (c) 2026 LcpMarvel — composition, critique, fit-check, and gated-pipeline layers
+Copyright (c) 2026 Zara Zhang (@zarazhangrui) — palette templates (a curated, distilled
+  subset) and medium rules, adapted from the beautiful-feishu-whiteboard project
+Copyright (c) 2026 LcpMarvel — composition, critique, fit-check, gated-pipeline, and
+  palette-generation layers
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
