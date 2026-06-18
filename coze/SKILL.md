@@ -32,7 +32,7 @@ dependency:
 ## 第 0 步：前置条件（动手前先查）
 
 - **飞书授权**：技能以**用户本人身份**写入其飞书租户，走扣子**平台授权**——用户在扣子里一键授权飞书，
-  运行时扣子把用户的 `user_access_token` 注入环境变量 `COZE_FEISHU_BOARD_$COZE_PROJECT_ID`，**无需用户建应用、
+  运行时扣子把用户的 `user_access_token` 注入环境变量 `COZE_FEISHU_WHITEBOARD_$COZE_PROJECT_ID`，**无需用户建应用、
   填密钥或跑设备码**（详见 [`CREDENTIALS.md`](CREDENTIALS.md)）。技能代码不碰 OAuth。
 - 沙箱已具备 Python（写入层，标准库即可）、Node（本地渲染）、`npx @larksuite/whiteboard-cli`（npx 自动下载）。
 
@@ -86,7 +86,7 @@ dependency:
 ### 4. 写进飞书 → 看实时白板 → 交付
 
 授权由扣子**平台授权**托管：用户在扣子里授权过飞书后，token 在运行时自动注入
-（环境变量 `COZE_FEISHU_BOARD_$COZE_PROJECT_ID`），**技能这步不做任何 OAuth**。若该变量缺失，写入脚本会直接
+（环境变量 `COZE_FEISHU_WHITEBOARD_$COZE_PROJECT_ID`），**技能这步不做任何 OAuth**。若该变量缺失，写入脚本会直接
 报错提示去扣子完成授权——把这句提示作为本轮消息转达用户即可，不要自己尝试任何授权流程。
 
 直接写入并导出：

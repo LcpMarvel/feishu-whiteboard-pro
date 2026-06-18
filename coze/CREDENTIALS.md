@@ -5,7 +5,7 @@
 
 1. 安装/使用技能时，扣子引导你授权飞书（跳转飞书同意页，确认即可）；
 2. 运行时扣子按命名约定 `COZE_{CREDENTIAL_NAME 大写}_{COZE_PROJECT_ID}` 把你的 `user_access_token`
-   注入环境变量（本技能即 `COZE_FEISHU_BOARD_$COZE_PROJECT_ID`）；
+   注入环境变量（本技能即 `COZE_FEISHU_WHITEBOARD_$COZE_PROJECT_ID`）；
 3. 技能即以**你本人身份**直连飞书 OpenAPI，把白板写进你自己的云文档。
 
 **你不需要建飞书应用、不需要填任何密钥、也不需要跑设备码**。技能代码不碰 OAuth，token 不落盘、不进 git。
@@ -14,7 +14,7 @@
 
 ```python
 skill_credentials(
-    credential_name="feishu_board",   # 注入变量名 = COZE_FEISHU_BOARD_{COZE_PROJECT_ID}
+    credential_name="feishu_whiteboard",   # 注入变量名 = COZE_FEISHU_WHITEBOARD_{COZE_PROJECT_ID}
     auth_type=3,                       # 3 = OAuth
     # 平台授权：不传 custom_oauth_url，扣子用其内置飞书集成（跨租户可用）
     allowed_domain="open.feishu.cn",   # 两发接口同域
