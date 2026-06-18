@@ -4,7 +4,7 @@ description: >
   把内容生成为「真正设计过」的可编辑飞书白板——强视觉层级、有意图的构图、留白，而不是
   一堆等大方块。先定设计简报（构图原型 + 配色策略 + 字号角色 + 反套路检查）再画，按坐标
   骨架施工，渲染后跑设计评审（层级/平衡/密度/对比/对齐）补到最弱项达标，最后写进你自己的
-  飞书文档成为可编辑白板。需要一个飞书自建应用凭证（见 CREDENTIALS.md）。
+  飞书文档成为可编辑白板。飞书走扣子「平台授权」，一键授权即用（见 CREDENTIALS.md）。
 ---
 
 # 飞书白板大师
@@ -28,9 +28,10 @@ description: >
 
 ## 第 0 步：前置条件（动手前先查）
 
-- **飞书授权**：技能以**用户本人身份**写入其飞书租户，走 `lark-cli` 设备码授权——给用户一个授权链接、
-  点一下即可，**无需用户建应用或填密钥**（详见 [`CREDENTIALS.md`](CREDENTIALS.md)）。授权在第 4 步按需触发。
-- 沙箱已具备 Node（本地渲染）、`npx @larksuite/whiteboard-cli`、`lark-cli`（均 npx 自动下载）。
+- **飞书授权**：技能以**用户本人身份**写入其飞书租户，走扣子**平台授权**——用户在扣子里一键授权飞书，
+  运行时扣子把用户的 `user_access_token` 注入环境变量 `COZE_FEISHU_BOARD_$COZE_PROJECT_ID`，**无需用户建应用、
+  填密钥或跑设备码**（详见 [`CREDENTIALS.md`](CREDENTIALS.md)）。技能代码不碰 OAuth。
+- 沙箱已具备 Python（写入层，标准库即可）、Node（本地渲染）、`npx @larksuite/whiteboard-cli`（npx 自动下载）。
 
 ## 管线（两道闸门，都不能跳）
 
@@ -79,31 +80,16 @@ description: >
 其修法重渲，循环到没有不及格轴。要真正交付的白板，最好让一个独立评审子 agent 只拿渲染图
 和评分表、以对抗姿态评。
 
-### 4. 授权 → 写进飞书 → 看实时白板 → 交付
+### 4. 写进飞书 → 看实时白板 → 交付
 
-授权用 [`scripts/feishu_auth.sh`](scripts/feishu_auth.sh)，**交互命令已封装成后台+刮 URL**，不要在一轮里
-阻塞等待。每次给用户的授权链接都作为**本轮最终消息**发出（可配 `lark-cli auth qrcode` 生成二维码），等
-用户确认授权后**下一轮**再续。
+授权由扣子**平台授权**托管：用户在扣子里授权过飞书后，token 在运行时自动注入
+（环境变量 `COZE_FEISHU_BOARD_$COZE_PROJECT_ID`），**技能这步不做任何 OAuth**。若该变量缺失，写入脚本会直接
+报错提示去扣子完成授权——把这句提示作为本轮消息转达用户即可，不要自己尝试任何授权流程。
 
-先查状态：`bash scripts/feishu_auth.sh status`。若 user 身份已 ready 且 token 有效 → 直接跳到写入。
-否则按需走授权（首次最多两次浏览器授权，之后凭 `LARKSUITE_CLI_CONFIG_DIR` 持久化复用）：
-
-```bash
-# ① 确保有应用（首次会后台注册一个，打印 VERIFY_URL；幂等，不会重复建）
-bash scripts/feishu_auth.sh app-begin       # → APP_OK 或 VERIFY_URL=<给用户授权的链接>
-#    若是 VERIFY_URL：把链接发给用户授权，下一轮：
-bash scripts/feishu_auth.sh app-finish       # → APP_OK（或 APP_PENDING 再等）
-
-# ② 授予读写权限（输出 verification_url + device_code 的 JSON）
-bash scripts/feishu_auth.sh login-begin      # 把 verification_url 发给用户授权，记下 device_code
-#    用户授权后，下一轮：
-bash scripts/feishu_auth.sh login-finish <device_code>   # 完成并打印 auth status
-```
-
-授权就绪后写入并导出：
+直接写入并导出：
 
 ```bash
-bash scripts/feishu_write.sh --svg <dir>/diagram.svg --title "标题" --image <dir>/board.png
+python3 scripts/feishu_write.py --svg <dir>/diagram.svg --title "标题" --image <dir>/board.png
 ```
 
 它以**用户本人身份**建文档（内嵌 `<whiteboard type="svg">`，服务端解析成可编辑节点）→ 返回**文档链接 +
@@ -122,9 +108,8 @@ bash scripts/feishu_write.sh --svg <dir>/diagram.svg --title "标题" --image <d
 - **[`examples/`](examples/)** — 各原型的金标准白板，从匹配的那张起步。
 - **[`templates/<slug>/design.md`](templates/)** — 每个 palette 一份（frontmatter：mood + 颜色 + 描边 + `catalog:` 块），只开你选中的那个。
 - **[`scripts/fit-check.mjs`](scripts/fit-check.mjs)** — 渲染前文字适配/出血预测。
-- **[`scripts/feishu_auth.sh`](scripts/feishu_auth.sh)** — 设备码授权（begin/complete/status）。
-- **[`scripts/feishu_write.sh`](scripts/feishu_write.sh)** — 以用户身份写进飞书 + 导出图。
-- **[`CREDENTIALS.md`](CREDENTIALS.md)** — 飞书授权说明（授权即用，无需自建应用）。
+- **[`scripts/feishu_write.py`](scripts/feishu_write.py)** — 以用户身份直连飞书 OpenAPI 建文档 + 导出图（token 由扣子平台授权注入）。
+- **[`CREDENTIALS.md`](CREDENTIALS.md)** — 飞书授权说明（扣子平台授权，一键即用）。
 
 ## 来源与许可（源码层署名，非商店营销文案）
 MIT，详见随包 [`LICENSE`](LICENSE)。配色与媒介规则改编自 beautiful-feishu-whiteboard（© Zara Zhang，MIT）；构图/评审/fit-check/管线层为原创新增。
