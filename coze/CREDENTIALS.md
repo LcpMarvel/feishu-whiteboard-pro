@@ -42,8 +42,12 @@ skill_credentials(
   服务端把内嵌 SVG 解析成可编辑白板节点，返回文档链接 + 白板 block token。
 - `GET /open-apis/board/v1/whiteboards/<token>/download_as_image` — 导出 ~2560×2560 预览图（仅供核对实时白板）。
 
-均以 `Authorization: Bearer <注入的 user_access_token>` 调用，出网到 `open.feishu.cn` 时由扣子服务端代理
-换成真 token 并校验域名。
+均以 `Authorization: Bearer <注入的 user_access_token>` 调用。**第三方请求必须用
+`from coze_workload_identity import requests`**——只有经这个代理发出、且域名在 `allowed_domain` 内，
+扣子才把占位符 token 换成真值并校验域名。用 `urllib`/原生 `requests` 会拿着占位符直接出网、鉴权失败。
+
+> `skill_credentials(...)` 不写进 skill 文件，而是在扣子**项目侧**注册（生成/配置凭证时由平台登记）。
+> skill 运行时只负责按上面的约定**读注入的环境变量**。
 
 ## 注意事项
 

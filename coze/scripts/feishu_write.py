@@ -3,17 +3,17 @@
 feishu_write.py — 把一张 SVG 写进用户飞书、成为可编辑白板，并导出预览图。
 
 授权模型：扣子「平台授权」。用户在扣子里一键授权飞书后，扣子把用户的 user_access_token
-按命名约定 COZE_{CREDENTIAL_NAME 大写}_{COZE_PROJECT_ID} 注入环境变量（如
-COZE_FEISHU_BOARD_7652555566874656814）——加载时是占位符，出网到 open.feishu.cn 时由扣子
-服务端代理换成真 token 并校验域名。本脚本不碰 OAuth、不依赖 lark-cli。
+按命名约定注入环境变量 COZE_{CREDENTIAL_NAME 大写}_{COZE_PROJECT_ID}
+（本技能即 COZE_FEISHU_BOARD_<COZE_PROJECT_ID>）。注入值是占位符——只有当出网请求经
+`coze_workload_identity` 的 requests 发出、且域名在凭证 allowed_domain 内时，扣子服务端代理
+才把它换成真 token。**因此第三方 API 必须用 coze_workload_identity.requests，不能用 urllib/原生 requests。**
 
-两发 OpenAPI（已对真实飞书验证通过）：
+两发 OpenAPI（已对真实飞书验证）：
   POST /open-apis/docs_ai/v1/documents               建带内嵌 <whiteboard type="svg"> 的文档，
                                                       服务端解析 SVG 成可编辑白板节点
   GET  /open-apis/board/v1/whiteboards/<t>/download_as_image   导出白板预览图
 
-需要的 scope（在 skill_credentials 平台授权里声明）：
-  docx:document:create · board:whiteboard:node:create · board:whiteboard:node:read
+凭证 feishu_board 需含 scope：docx:document(建文档) · board:whiteboard:node:read(导出图)。
 
 用法：
   python3 feishu_write.py --svg <path> [--title <str>] [--image <out.png>]
@@ -22,39 +22,39 @@ import argparse
 import json
 import os
 import sys
-import urllib.request
-import urllib.error
 
-BASE = "https://open.feishu.cn"
-CREDENTIAL_NAME = "feishu_board"   # 须与 skill_credentials 的 credential_name 一致
+# 第三方 API 调用必须从此包导入：凭证代理在这一层把占位符 token 换成真值并校验域名。
+from coze_workload_identity import requests
+
+BASE = "https://open.feishu.cn/open-apis"
+CREDENTIAL_NAME = "feishu_board"   # 须与扣子项目里声明的 credential_name 一致
 
 
 def token():
     """平台授权注入的 user_access_token。变量名 = COZE_{CREDENTIAL_NAME 大写}_{COZE_PROJECT_ID}。
     任一缺失直接抛——没有兜底，早暴露早修。"""
-    pid = os.environ.get("COZE_PROJECT_ID", "").strip()
+    pid = os.getenv("COZE_PROJECT_ID", "").strip()
     if not pid:
         sys.exit("COZE_PROJECT_ID 未设置：本脚本须在扣子运行时环境内执行")
     var = f"COZE_{CREDENTIAL_NAME.upper()}_{pid}"
-    t = os.environ.get(var, "").strip()
+    t = os.getenv(var, "").strip()
     if not t:
-        sys.exit(f"{var} 未注入：检查扣子平台授权是否完成、"
-                 f"skill_credentials 的 credential_name 是否为 {CREDENTIAL_NAME!r}")
+        sys.exit(f"{var} 未注入：检查扣子凭证 {CREDENTIAL_NAME!r} 是否已声明并完成平台授权")
     return t
 
 
-def call(method, path, body=None, binary=False):
-    data = json.dumps(body).encode() if body is not None else None
-    req = urllib.request.Request(BASE + path, data=data, method=method)
-    req.add_header("Authorization", f"Bearer {token()}")
-    if data is not None:
-        req.add_header("Content-Type", "application/json; charset=utf-8")
-    try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            raw = r.read()
-            return raw if binary else json.loads(raw.decode("utf-8", "replace"))
-    except urllib.error.HTTPError as e:
-        sys.exit(f"飞书 API {method} {path} HTTP {e.code}：{e.read().decode('utf-8', 'replace')[:800]}")
+def call(method, path, body=None):
+    headers = {"Authorization": f"Bearer {token()}", "Content-Type": "application/json"}
+    url = BASE + path
+    if method == "GET":
+        r = requests.get(url, headers=headers, timeout=30)
+    elif method == "POST":
+        r = requests.post(url, headers=headers, json=body, timeout=30)
+    else:
+        sys.exit(f"unexpected method {method}")
+    if r.status_code >= 400:
+        sys.exit(f"飞书 API {method} {path} HTTP {r.status_code}：{r.text[:800]}")
+    return r
 
 
 def main():
@@ -69,7 +69,7 @@ def main():
     content = f'<title>{a.title}</title><whiteboard type="svg">{svg}</whiteboard>'
 
     # ① 建文档（内嵌白板，用户本人身份）
-    j = call("POST", "/open-apis/docs_ai/v1/documents", {"content": content, "format": "xml"})
+    j = call("POST", "/docs_ai/v1/documents", {"content": content, "format": "xml"}).json()
     if j.get("code") not in (0, None):
         sys.exit(f"建文档失败 code={j.get('code')} msg={j.get('msg')!r}")
     doc = (j.get("data") or {}).get("document") or {}
@@ -83,7 +83,7 @@ def main():
 
     # ② 导出预览图（飞书返回 ~2560×2560 固定方图，仅供核对实时白板，不作交付图）
     if a.image:
-        img = call("GET", f"/open-apis/board/v1/whiteboards/{wb_token}/download_as_image", binary=True)
+        img = call("GET", f"/board/v1/whiteboards/{wb_token}/download_as_image").content
         if img[:3] not in (b"\x89PN", b"\xff\xd8\xff"):
             sys.exit(f"导出非图片：{img[:300]!r}")
         with open(a.image, "wb") as f:
