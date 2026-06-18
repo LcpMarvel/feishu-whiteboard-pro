@@ -1,5 +1,5 @@
 ---
-name: 飞书白板大师
+name: feishu-whiteboard-pro
 description: >
   把内容生成为「真正设计过」的可编辑飞书白板——强视觉层级、有意图的构图、留白，而不是
   一堆等大方块。先定设计简报（构图原型 + 配色策略 + 字号角色 + 反套路检查）再画，按坐标
@@ -58,6 +58,9 @@ description: >
 ### 闸门 1 · 设计简报（强制，写 SVG 之前）
 先读 [`COMPOSITION.md`](COMPOSITION.md) 和 [`CATALOG.md`](CATALOG.md)，再**写下**这五条承诺
 （叙事形状→原型、焦点、配色策略+palette、字号角色、反套路检查）。详见 COMPOSITION.md。
+配色优先选 CATALOG.md 里的锚点 palette（可靠、可换肤）；若没有合适的，按
+[`templates/GENERATE.md`](templates/GENERATE.md) **现场生成**一套——它产出同样的 frontmatter 形态，
+照样可换肤，本轮内联使用即可（不必写进技能目录）。
 用一句话告诉用户你选了哪个原型和 palette、为什么，然后开画。
 
 ### 2. 按骨架构图
@@ -104,17 +107,20 @@ bash scripts/feishu_write.sh --svg <dir>/diagram.svg --title "标题" --image <d
 ```
 
 它以**用户本人身份**建文档（内嵌 `<whiteboard type="svg">`，服务端解析成可编辑节点）→ 返回**文档链接 +
-白板 token** → 导出白板图。打开导出图核对版面（导出对版面/填充忠实，但文字颜色不可靠，颜色以实时文档为准）。
+白板 token** → 导出白板图 `board.png`。`board.png` 对版面/填充忠实、但文字颜色不可靠（颜色以实时文档为准），
+而且是飞书把任意画板补白成 ~2560×2560 的**固定方图预览**——**仅用于核对实时白板**，不作交付图。
 
-交付**两样**：飞书**文档链接** + 渲染图。然后告诉用户可随时**换 palette**，同构图重渲，只改颜色。
+交付**两样**：飞书**文档链接** + 第 3 步本地渲染的 `diagram.png`（贴合构图、无补白），**不要**交付方图 `board.png`。
+然后告诉用户可随时**换 palette**，同构图重渲，只改颜色。
 
 ## 文件
 - **[`RULES.md`](RULES.md)** — 媒介硬规则。必读。
 - **[`COMPOSITION.md`](COMPOSITION.md)** — 原型库、字号体系、间距栅格、反套路。核心。
 - **[`CRITIQUE.md`](CRITIQUE.md)** — 渲染后设计评分表 + 逐轴修法 + 独立评审。
-- **[`CATALOG.md`](CATALOG.md)** — 35 套 palette，按此表选色。
+- **[`CATALOG.md`](CATALOG.md)** — 精选 palette 锚点（vibe/formality 一览），按此表选色。由 `templates/` 生成，勿手改。
+- **[`templates/GENERATE.md`](templates/GENERATE.md)** — 没有合适锚点时，如何现场生成一套同形态 palette。
 - **[`examples/`](examples/)** — 各原型的金标准白板，从匹配的那张起步。
-- **[`templates/<slug>/design.md`](templates/)** — 每个 palette 一份，只开你选中的那个。
+- **[`templates/<slug>/design.md`](templates/)** — 每个 palette 一份（frontmatter：mood + 颜色 + 描边 + `catalog:` 块），只开你选中的那个。
 - **[`scripts/fit-check.mjs`](scripts/fit-check.mjs)** — 渲染前文字适配/出血预测。
 - **[`scripts/feishu_auth.sh`](scripts/feishu_auth.sh)** — 设备码授权（begin/complete/status）。
 - **[`scripts/feishu_write.sh`](scripts/feishu_write.sh)** — 以用户身份写进飞书 + 导出图。
