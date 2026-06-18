@@ -34,6 +34,10 @@ Lark 国际版对应 `open.larksuite.com` / `accounts.larksuite.com`。
 
 - 沙箱是临时环境，授权态默认不跨会话保留；如需「授权一次长期有效」，把 `LARKSUITE_CLI_CONFIG_DIR`
   指向项目持久挂载（待一次性联调确认）。
+- ⚠️ **凭证不进 git**：若把 `LARKSUITE_CLI_CONFIG_DIR` 指向项目根下的 `.larkcfg/`，那里存的是你的飞书
+  登录 token，**整个目录必须 gitignore**。`coze/build.sh` 部署时会自动把 `.larkcfg/` 写进项目根
+  `.gitignore`，并从 git 索引移除已被跟踪的副本（磁盘文件保留）。扣子自带的 `.gitignore` 默认只忽略
+  其中一个日志文件，不够。
 - 授权链接只对**你本人**有效，请勿转发他人。
 
 > ⚠️ 待一次性联调确认：设备码授权在 Coze 对话里的完整体验（出链接→授权→续上）、`--as user` 写入后

@@ -34,11 +34,29 @@ for f in RULES.md COMPOSITION.md CRITIQUE.md CATALOG.md; do
 done
 cp "$root/scripts/fit-check.mjs" "$dist/scripts/fit-check.mjs"
 cp -R "$root/templates" "$dist/templates"
-cp -R "$root/examples" "$dist/examples"
+
+# Examples: ship ONLY the editable .svg sources — they are the runtime starting points
+# (SKILL.md step 2: "从那个 .svg 起步"). The rendered .png gallery is reference-only
+# (README / store listing), is never read by the skill flow, and is ~90% of the package
+# weight, so it stays OUT of the deployed package.
+#
+# LEAN=1 strips examples/ entirely — a maximally-lean isolation build used to test whether
+# Coze's BuildGitCode timeout has anything to do with the payload at all.
+if [ -n "${LEAN:-}" ]; then
+  echo "   (LEAN build: skipping examples/)"
+else
+  mkdir -p "$dist/examples"
+  cp "$root"/examples/*.svg "$dist/examples"/
+fi
 
 chmod +x "$dist/scripts/feishu_auth.sh" "$dist/scripts/feishu_write.sh" 2>/dev/null || true
 
-echo "✅ Assembled Coze package at: $dist"
+# Zero-.git guarantee: the package is PURE FILES, never a git working tree. A nested .git
+# (e.g. accidentally copied along with a source dir) is the prime suspect for Coze's
+# BuildGitCode stall — strip any that snuck in.
+find "$dist" -name .git -prune -exec rm -rf {} + 2>/dev/null || true
+
+echo "✅ Assembled Coze package at: $dist (pure files, no .git)"
 
 # Coze packer locates a skill at <project_root>/<skill_name>/SKILL.md. So on deploy we put the
 # package INSIDE a folder named after the skill and point .coze skill_package at that folder.
@@ -53,14 +71,32 @@ if [ -n "$TARGET" ]; then
     rm -rf "$pkg"            # safe: only the skill subfolder, never the whole TARGET
     mkdir -p "$pkg"
     cp -R "$dist/." "$pkg"/
+    # Pure files only — never let a .git ride into the deployed skill folder.
+    find "$pkg" -name .git -prune -exec rm -rf {} + 2>/dev/null || true
     cat > "$TARGET/.coze" <<'EOF'
 [skill]
 name="飞书白板大师"
 description="一句话把内容生成为有设计感、可编辑的飞书白板：先定设计简报（构图原型+配色+字号角色），按坐标骨架施工，渲染后过五轴设计评审，最后以你本人身份写进你自己的飞书云文档，成为可编辑白板。"
 skill_package="飞书白板大师"
 project_name="飞书白板大师"
-project_description="面向飞书 SVG 白板的设计判断技能：构图原型库 + 35 套配色 + 渲染前文字预检 + 渲染后五轴评审（层级/平衡/密度/对比/对齐），产出写进你飞书、真实可编辑的白板，而非方框网格截图。"
+project_description="面向飞书 SVG 白板的设计判断技能：构图原型库 + 精选配色锚点（可现场生成换肤）+ 渲染前文字预检 + 渲染后五轴评审（层级/平衡/密度/对比/对齐），产出写进你飞书、真实可编辑的白板，而非方框网格截图。"
 EOF
+    # SECURITY: lark-cli persists the user's Feishu login (token) under .larkcfg/ when
+    # LARKSUITE_CLI_CONFIG_DIR points there (see CREDENTIALS.md). That dir MUST NEVER enter
+    # git. Coze's default .gitignore only excludes a single log file under it, so self-heal
+    # the project root's .gitignore to ignore the WHOLE credential dir.
+    gi="$TARGET/.gitignore"
+    if [ ! -f "$gi" ] || ! grep -qxF '.larkcfg/' "$gi" 2>/dev/null; then
+      printf '\n# lark-cli credentials (Feishu login token) — never commit\n.larkcfg/\n' >> "$gi"
+      echo "🔒 .gitignore: 已忽略整个 .larkcfg/（飞书登录凭证）"
+    fi
+    # If a previous run already tracked the credential dir, untrack it (keeps the files on disk).
+    if git -C "$TARGET" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      if git -C "$TARGET" ls-files --error-unmatch .larkcfg >/dev/null 2>&1; then
+        git -C "$TARGET" rm -r --cached --quiet .larkcfg
+        echo "🔒 已从 git 索引移除已跟踪的 .larkcfg/（磁盘文件保留，需 commit 生效）"
+      fi
+    fi
     echo "✅ Deployed: skill files at $pkg/ ; manifest at $TARGET/.coze"
   fi
 fi
