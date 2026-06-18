@@ -7,9 +7,10 @@
 // into a neighbour. This estimates every <text>'s width and checks it against the
 // geometry, so those are caught before the render → look loop, not during it.
 //
-// Usage:  node fit-check.mjs <diagram.svg> [--pad N] [--margin N]
-//   --pad     min breathing space inside a box, each side (default 12)
-//   --margin  min distance content must keep from the canvas edge (default 40)
+// Usage:  node fit-check.mjs <diagram.svg> [--pad N] [--margin N] [--deadband N]
+//   --pad       min breathing space inside a box, each side (default 12)
+//   --margin    min distance content must keep from the canvas edge (default 40)
+//   --deadband  max empty band tolerated on a side before it's flagged as dead space (default 160)
 //
 // Exit 1 if any defect is found. It is a predictor, not a renderer: treat hits as
 // "look here", and still trust your eyes on the rendered image.
@@ -28,6 +29,7 @@ if (!file) {
 }
 const PAD = opt("pad", 12);
 const MARGIN = opt("margin", 40);
+const DEADBAND = opt("deadband", 160);
 const svg = readFileSync(file, "utf8");
 
 // ---- viewBox ----------------------------------------------------------------
@@ -150,9 +152,38 @@ for (const r of rects) {
   }
 }
 
+// ---- dead space (RULES.md: canvas height/viewBox should wrap content + one margin) ----
+// Content bbox over rects + estimated text extents; a side whose empty band exceeds DEADBAND
+// means the canvas is looser than the content — usually the board floating in the top third.
+let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+for (const r of rects) {
+  minX = Math.min(minX, r.x); minY = Math.min(minY, r.y);
+  maxX = Math.max(maxX, r.x + r.w); maxY = Math.max(maxY, r.y + r.h);
+}
+for (const t of texts) {
+  const w = textWidth(t.str, t.fs);
+  const L = t.anchor === "middle" ? t.x - w / 2 : t.anchor === "end" ? t.x - w : t.x;
+  minX = Math.min(minX, L); maxX = Math.max(maxX, L + w);
+  minY = Math.min(minY, t.y - t.fs); maxY = Math.max(maxY, t.y); // baseline − ascent .. baseline
+}
+if (isFinite(maxY) && isFinite(vbw) && isFinite(vbh)) {
+  const sides = [
+    ["bottom", vby + vbh - maxY, "y"],
+    ["top", minY - vby, "y"],
+    ["right", vbx + vbw - maxX, "x"],
+    ["left", minX - vbx, "x"],
+  ];
+  for (const [side, gap, axis] of sides) {
+    if (gap > DEADBAND) {
+      const span = axis === "y" ? `content y ${Math.round(minY)}..${Math.round(maxY)} of ${vbh}` : `content x ${Math.round(minX)}..${Math.round(maxX)} of ${vbw}`;
+      issues.push(`DEADSPACE ${side} band ≈${Math.round(gap)}px empty (${span}) — tighten the viewBox to content + one margin, or redistribute to fill it`);
+    }
+  }
+}
+
 // ---- report -----------------------------------------------------------------
 console.log(`fit-check ${file}`);
-console.log(`  canvas ${vbw}×${vbh} · ${rects.length} rects · ${texts.length} texts · pad ${PAD} · margin ${MARGIN}`);
+console.log(`  canvas ${vbw}×${vbh} · ${rects.length} rects · ${texts.length} texts · pad ${PAD} · margin ${MARGIN} · deadband ${DEADBAND}`);
 if (!issues.length) {
   console.log("  ✓ no predicted fit defects");
   process.exit(0);

@@ -77,8 +77,12 @@ the real board (the image export and the GUI behave differently — see notes be
   delete it. Put that kind of context in your chat reply to the user, never on the canvas.
 
 - **Transforms:** `translate` / `rotate` / `scale` are safe; avoid `skewX` / `skewY` / `matrix(...)`.
-- **No fixed canvas.** No 16:9, no scaler. Work in a logical coordinate space (≈1600–1700 wide) and
-  let content define the bounds.
+- **No fixed canvas, and no dead space.** No 16:9, no scaler. Work in a logical coordinate space
+  (≈1600–1700 wide) and **set the height to wrap the content**: the SVG `height` / `viewBox` should
+  equal the content's bounding box plus one outer margin (≈80) on every side — nothing more. Short,
+  wide content (a timeline, a one-row comparison) gets a short, wide canvas; never a tall canvas with
+  the board floating in the top third and a blank band below. If a side has a large empty band, either
+  tighten the bounds to the content **or** redistribute the composition to fill it — do not ship the gap.
 - **Text reflows by character** (CJK ≈ 1em, Latin ≈ 0.6em). Pad boxes generously; never fit text to
   the pixel; wrap long lines across `<tspan>`s rather than shrinking.
 
@@ -98,6 +102,9 @@ the real board (the image export and the GUI behave differently — see notes be
      - **overlaps** — shapes or labels colliding unintentionally (a duplicate-offset shadow or an
        intentional overlap is fine; an accidental one is not),
      - **clipping** — anything cut off on the right/bottom.
+     - **dead space / loose canvas** — a large empty band (most often the bottom) means the `height` /
+       `viewBox` is taller than the content. Tighten the canvas bounds to the content bbox + one margin,
+       or redistribute the layout to fill it. The board must not float in the top third.
      - **hand-drawn arrowheads** — run `grep -nE '<polygon|<polyline' <dir>/diagram.svg` and convert any
        chevron/triangle arrowhead to a `marker-end` (see the Arrows rule above). Do this every time,
        and especially when you started from an existing SVG whose arrows may predate the rule.
@@ -112,6 +119,11 @@ the real board (the image export and the GUI behave differently — see notes be
    then `lark-cli whiteboard +query --whiteboard-token <tok> --output_as image --output <dir> --as user`,
    view it, and fix any remaining layout issues. The export is faithful for **layout, shapes, fills,
    opacity** — but **not text color** (verify color via `--output_as raw` or the live doc, not the PNG).
+   - **This Feishu export is a verification image, not the deliverable.** It comes back as a fixed
+     **square preview** (Feishu pads any board to ~2560×2560, regardless of its aspect ratio — there is
+     no size/bounds option on the API), so a wide or short board floats in a sea of whitespace. Use it
+     only to check the live board (especially text colour). **Deliver the local `diagram.png`** from
+     step 3 instead — it's rendered straight from the SVG, so it's tight to the composition.
 
 ### Creating the doc + whiteboard block to write into
 
