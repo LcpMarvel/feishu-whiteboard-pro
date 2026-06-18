@@ -57,15 +57,16 @@ find "$dist" -name .git -prune -exec rm -rf {} + 2>/dev/null || true
 
 echo "✅ Assembled Coze package at: $dist (pure files, no .git)"
 
-# Coze packer locates a skill at <project_root>/<skill_package>/SKILL.md and extracts it from
-# the tar.gz. Two hard requirements, learned the hard way:
-#   1. The folder/skill_package MUST end in `.skill` — the packer only recognizes `*.skill`
-#      directories as skills; without it [build][skill] fails "skill not found in source code".
-#      (Confirmed against a Coze-generated reference skill: skill_package = "<name>.skill".)
-#   2. The name MUST be ASCII — a non-ASCII (Chinese) folder name gets mangled in the tar.
-# So folder + skill_package are this ASCII slug + `.skill`; the Chinese display name
-# ("飞书白板大师") lives in SKILL.md's frontmatter and the store listing, NOT in this path.
-SKILL_DIR="feishu-whiteboard-pro.skill"
+# Coze packer convention (confirmed against a Coze-generated reference skill on disk):
+#   - SOURCE folder = the skill `name`, WITHOUT any suffix (e.g. `feishu-whiteboard/`),
+#     containing SKILL.md + scripts/ + ...
+#   - `.coze` skill_package = "<name>.skill" — the packer strips `.skill` to find the source
+#     folder. Without the `.skill` suffix [build][skill] fails "skill not found in source code".
+#     (`<name>.skill` itself is the BUILT package the pipeline emits — we do NOT create it.)
+#   - name MUST be ASCII — a non-ASCII (Chinese) folder name gets mangled in the tar.
+# So: folder = ASCII slug (no suffix); skill_package = slug + ".skill"; Chinese display name
+# lives in SKILL.md frontmatter / store listing, NOT in this path.
+SKILL_DIR="feishu-whiteboard-pro"
 
 TARGET="${1:-}"
 if [ -n "$TARGET" ]; then
@@ -78,15 +79,15 @@ if [ -n "$TARGET" ]; then
     cp -R "$dist/." "$pkg"/
     # Pure files only — never let a .git ride into the deployed skill folder.
     find "$pkg" -name .git -prune -exec rm -rf {} + 2>/dev/null || true
-    # skill_package MUST equal $SKILL_DIR (ASCII + `.skill`). name/project_name kept ASCII;
-    # Chinese display name is in SKILL.md.
-    cat > "$TARGET/.coze" <<'EOF'
+    # Format mirrors the Coze-generated reference .coze exactly: 2-space indent, spaces around
+    # `=`, skill_package first. skill_package = "<SKILL_DIR>.skill" (ASCII); name = SKILL_DIR.
+    cat > "$TARGET/.coze" <<EOF
 [skill]
-name="feishu-whiteboard-pro"
-description="一句话把内容生成为有设计感、可编辑的飞书白板：先定设计简报（构图原型+配色+字号角色），按坐标骨架施工，渲染后过五轴设计评审，最后以你本人身份写进你自己的飞书云文档，成为可编辑白板。"
-skill_package="feishu-whiteboard-pro.skill"
-project_name="feishu-whiteboard-pro"
-project_description="面向飞书 SVG 白板的设计判断技能：构图原型库 + 精选配色锚点（可现场生成换肤）+ 渲染前文字预检 + 渲染后五轴评审（层级/平衡/密度/对比/对齐），产出写进你飞书、真实可编辑的白板，而非方框网格截图。"
+  skill_package = "$SKILL_DIR.skill"
+  name = "$SKILL_DIR"
+  description = "一句话把内容生成为有设计感、可编辑的飞书白板：先定设计简报（构图原型+配色+字号角色），按坐标骨架施工，渲染后过五轴设计评审，最后以你本人身份写进你自己的飞书云文档，成为可编辑白板。"
+  project_name = "$SKILL_DIR"
+  project_description = "面向飞书 SVG 白板的设计判断技能：构图原型库 + 精选配色锚点（可现场生成换肤）+ 渲染前文字预检 + 渲染后五轴评审（层级/平衡/密度/对比/对齐），产出写进你飞书、真实可编辑的白板，而非方框网格截图。"
 EOF
     # 平台授权下没有本地凭证文件：token 由扣子运行时注入（FEISHU_USER_ACCESS_TOKEN），
     # 不落盘、不进 git，所以无需任何 .gitignore 自愈逻辑。
