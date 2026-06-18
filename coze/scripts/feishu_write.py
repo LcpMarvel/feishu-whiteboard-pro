@@ -3,10 +3,10 @@
 feishu_write.py — 把一张 SVG 写进用户飞书、成为可编辑白板，并导出预览图。
 
 授权模型：扣子「平台授权」。用户在扣子里一键授权飞书后，扣子把用户的 user_access_token
-按命名约定注入环境变量 COZE_{CREDENTIAL_NAME 大写}_{COZE_PROJECT_ID}
-（本技能即 COZE_FEISHU_WHITEBOARD_<COZE_PROJECT_ID>）。注入值是占位符——只有当出网请求经
-`coze_workload_identity` 的 requests 发出、且域名在凭证 allowed_domain 内时，扣子服务端代理
-才把它换成真 token。**因此第三方 API 必须用 coze_workload_identity.requests，不能用 urllib/原生 requests。**
+注入环境变量 COZE_{CREDENTIAL_NAME 大写}_{后缀}（如 COZE_FEISHU_WHITEBOARD_<id>，后缀因环境而异，
+故下方按前缀扫）。**该变量只在技能被扣子运行时调用时注入，裸终端 shell 没有。** 注入值是占位符——
+只有当出网请求经 `coze_workload_identity` 的 requests 发出、且域名在凭证 allowed_domain 内时，
+扣子服务端代理才把它换成真 token。**因此第三方 API 必须用 coze_workload_identity.requests，不能用 urllib/原生 requests。**
 
 两发 OpenAPI（已对真实飞书验证）：
   POST /open-apis/docs_ai/v1/documents               建带内嵌 <whiteboard type="svg"> 的文档，
@@ -31,16 +31,17 @@ CREDENTIAL_NAME = "feishu_whiteboard"   # 须与扣子项目里声明的 credent
 
 
 def token():
-    """平台授权注入的 user_access_token。变量名 = COZE_{CREDENTIAL_NAME 大写}_{COZE_PROJECT_ID}。
-    任一缺失直接抛——没有兜底，早暴露早修。"""
-    pid = os.getenv("COZE_PROJECT_ID", "").strip()
-    if not pid:
-        sys.exit("COZE_PROJECT_ID 未设置：本脚本须在扣子运行时环境内执行")
-    var = f"COZE_{CREDENTIAL_NAME.upper()}_{pid}"
-    t = os.getenv(var, "").strip()
-    if not t:
-        sys.exit(f"{var} 未注入：检查扣子凭证 {CREDENTIAL_NAME!r} 是否已声明并完成平台授权")
-    return t
+    """平台授权注入的 user_access_token。变量名形如 COZE_{CREDENTIAL_NAME 大写}_{后缀}，
+    后缀是 project_id 还是 skill_id 因环境而异，故按前缀扫，不写死后缀。
+    注意：凭证只在「技能被扣子运行时调用」的上下文注入，裸终端 shell 不会有——早暴露早修。"""
+    prefix = f"COZE_{CREDENTIAL_NAME.upper()}_"
+    hits = {k: v.strip() for k, v in os.environ.items() if k.startswith(prefix) and v.strip()}
+    if not hits:
+        sys.exit(f"未找到注入凭证（前缀 {prefix}*）：确认本技能是被扣子运行时调用（裸终端不会注入），"
+                 f"且凭证 {CREDENTIAL_NAME!r} 已声明并完成平台授权")
+    if len(hits) > 1:
+        sys.exit(f"匹配到多个凭证变量，无法判定用哪个：{list(hits)}")
+    return next(iter(hits.values()))
 
 
 def call(method, path, body=None):
