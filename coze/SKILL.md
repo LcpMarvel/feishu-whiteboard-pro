@@ -31,9 +31,12 @@ dependency:
 
 ## 第 0 步：前置条件（动手前先查）
 
-- **飞书授权**：技能以**用户本人身份**写入其飞书租户，走扣子**平台授权**——用户在扣子里一键授权飞书，
-  运行时扣子把用户的 `user_access_token` 注入环境变量 `COZE_FEISHU_WHITEBOARD_$COZE_PROJECT_ID`，**无需用户建应用、
-  填密钥或跑设备码**（详见 [`CREDENTIALS.md`](CREDENTIALS.md)）。技能代码不碰 OAuth。
+- **飞书授权（Agent 必读，照做别猜）**：技能以**用户本人身份**写入其飞书租户，走扣子**平台授权**。用户在扣子一键授权后，
+  运行时自动注入 `COZE_FEISHU_WHITEBOARD_<后缀>`（后缀因环境而异，脚本按前缀自动识别，**不用关心后缀是 project 还是 skill id**）。
+  技能代码不碰 OAuth、不需要建应用或填密钥（详见 [`CREDENTIALS.md`](CREDENTIALS.md)）。
+  - **注入只在「技能运行时」发生**：主对话 / 裸终端**没有**这个变量，必须在扣子「调试/预览」里跑本技能。
+  - 写飞书前先自检：`python3 scripts/feishu_write.py --check`。`READY` 才写；`NOT_READY` 就把它打印的指引**原样转达用户**去扣子完成授权。
+  - 拿不到凭证时**绝不**改用 lark-cli、**绝不**自造授权链接——本技能只依赖扣子注入。写入不可用**不等于任务失败**：照样交付本地 PNG + SVG。
 - 沙箱已具备 Python（写入层，标准库即可）、Node（本地渲染）、`npx @larksuite/whiteboard-cli`（npx 自动下载）。
 
 ## 管线（两道闸门，都不能跳）
@@ -85,15 +88,16 @@ dependency:
 
 ### 4. 写进飞书 → 看实时白板 → 交付
 
-授权由扣子**平台授权**托管：用户在扣子里授权过飞书后，token 在运行时自动注入
-（环境变量 `COZE_FEISHU_WHITEBOARD_$COZE_PROJECT_ID`），**技能这步不做任何 OAuth**。若该变量缺失，写入脚本会直接
-报错提示去扣子完成授权——把这句提示作为本轮消息转达用户即可，不要自己尝试任何授权流程。
-
-直接写入并导出：
+授权由扣子**平台授权**托管，token 在运行时自动注入，**技能这步不做任何 OAuth**。**先自检再写**：
 
 ```bash
+python3 scripts/feishu_write.py --check    # READY 才继续；NOT_READY 见下
 python3 scripts/feishu_write.py --svg <dir>/diagram.svg --title "标题" --image <dir>/board.png
 ```
+
+`--check` 报 `NOT_READY`（或写入报缺凭证）时：把脚本打印的指引**原样转达用户**（去扣子完成飞书授权 / 确认在「调试·预览」运行时里跑），
+**不要**自己尝试任何授权、**不要**改用 lark-cli、**不要**自造授权链接。此时仍**交付第 3 步本地渲染的 `diagram.png` + SVG 源文件**给用户，
+待用户授权后重跑写入——**写入不可用 ≠ 任务失败**。
 
 它以**用户本人身份**建文档（内嵌 `<whiteboard type="svg">`，服务端解析成可编辑节点）→ 返回**文档链接 +
 白板 token** → 导出白板图 `board.png`。`board.png` 对版面/填充忠实、但文字颜色不可靠（颜色以实时文档为准），

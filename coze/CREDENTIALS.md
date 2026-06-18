@@ -28,13 +28,14 @@ skill_credentials(
 
 ## 需要的 scope（同意页应包含）
 
-| 用途 | scope |
-|---|---|
-| 建云文档 | `docx:document:create` |
-| 内嵌 SVG 解析成白板节点 | `board:whiteboard:node:create` |
-| 导出白板预览图 | `board:whiteboard:node:read` |
+| 用途 | scope | 缺失症状 |
+|---|---|---|
+| 建云文档 | `docx:document:create` | 完全无法写入（建文档就失败） |
+| 内嵌 SVG 解析成白板节点 | `board:whiteboard:node:create` | 文档建出但白板为空 |
+| 导出白板预览图 | `board:whiteboard:node:read` | 白板可用、但导不出预览图（可只交付文档链接） |
 
 > 已对真实飞书 API 验证：这三个 scope 足够建文档 + 导白板，不需要 drive 等其它权限。
+> 排错：`python3 scripts/feishu_write.py --check` 先确认凭证是否注入；权限类错误码（如 99991672 / 99991679）对照上表补 scope。
 
 ## 用到的 OpenAPI（写入层 `scripts/feishu_write.py`）
 
